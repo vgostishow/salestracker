@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Замер базы — Маяк</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  /* === Маяк brand tokens === */
+  :root {
+    --bg:        #0f1117;
+    --surface:   #1a1d27;
+    --surface2:  #22263a;
+    --border:    #2e3148;
+    --text:      #f0f2ff;
+    --muted:     #7a7f9a;
+    --accent:    #f5a623;
+    --accent-dk: #c47d0b;
+    --accent-lt: #fff0d0;
+    --green:     #3ecf8e;
+    --green-bg:  #0d2e21;
+    --red:       #e05252;
+    --red-bg:    #2e0f0f;
+    --radius:    14px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 1.25rem 0.75rem 2.5rem;
+    color: var(--text);
+  }
+  .container { width: 100%; max-width: 480px; }
+
+  /* Header / logo row */
+  .topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+  .logo-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #000; flex-shrink: 0;
+  }
+  .logo-text { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: 0.3px; }
+  .logo-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  /* Timer card */
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
+  .timer-block { display: flex; flex-direction: column; align-items: center; }
+  .timer-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .timer-display { font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); letter-spacing: 1px; }
+  .timer-display.warn { color: var(--accent); }
+  .timer-display.over { color: var(--red); }
+  .timer-display.paused { color: var(--muted); }
+
+  .controls { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
+  .time-row { font-size: 11px; color: var(--muted); text-align: right; line-height: 1.7; }
+  .time-row b { color: var(--text); font-weight: 500; }
+
+  .btn-row { display: flex; gap: 7px; }
+  .btn {
+    padding: 9px 14px; font-size: 13px; font-weight: 500;
+    border-radius: 9px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text);
+    cursor: pointer; white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s;
+  }
+  .btn:active:not(:disabled) { opacity: 0.75; }
+  .btn:disabled { opacity: 0.3; cursor: default; }
+  .btn.green  { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+  .btn.amber  { background: #2e1f00; color: var(--accent); border-color: var(--accent); }
+  .btn.done   { background: var(--surface); color: var(--muted); cursor: default; border-color: var(--border); }
+  .btn.danger { border-color: var(--red); color: var(--red); }
+
+  /* Progress */
+  .progress-bar { width: 100%; height: 3px; background: var(--surface2); border-radius: 2px; margin-bottom: 1rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s linear, background 1s; }
+
+  /* Cards */
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1rem; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0.9rem 1rem;
+    cursor: pointer; user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.15s; position: relative; overflow: hidden;
+  }
+  .card:active:not(.disabled) { border-color: var(--accent); transform: scale(0.97); }
+  .card.disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+  .card-icon { font-size: 20px; margin-bottom: 6px; color: var(--muted); }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .card-hint { font-size: 11px; color: var(--muted); margin-bottom: 8px; line-height: 1.4; }
+  .card-count { font-size: 38px; font-weight: 600; color: var(--accent); line-height: 1; }
+  .card-adds { font-size: 10px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+  .flash { position: absolute; inset: 0; border-radius: var(--radius); pointer-events: none; opacity: 0; background: rgba(245,166,35,0.12); }
+  @keyframes flashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+  /* Footer */
+  .footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+  .conv-rate { font-size: 12px; color: var(--muted); }
+  .conv-rate b { color: var(--text); font-weight: 500; }
+  .btn-reset { padding: 6px 12px; font-size: 12px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .btn-reset:active { color: var(--text); border-color: var(--muted); }
+
+  /* Sections */
+  .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 10px; }
+  .section-title { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 8px; }
+
+  .break-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 8px; background: var(--surface2); margin-bottom: 5px; font-size: 12px; }
+  .break-num { font-size: 10px; font-weight: 500; color: var(--muted); min-width: 18px; }
+  .break-times { color: var(--text); }
+  .break-dur { margin-left: auto; color: var(--accent); background: #2e1f00; padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .break-active { background: #1e1800; border: 1px dashed var(--accent); }
+  .no-breaks { font-size: 12px; color: var(--muted); }
+
+  /* Report */
+  .report-box { display: none; }
+  .report-box.visible { display: block; }
+  .report-text {
+    font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.75;
+    color: var(--text); background: var(--bg);
+    border-radius: 10px; padding: 12px 14px;
+    white-space: pre-wrap; word-break: break-word;
+    border: 1px solid var(--border); margin-bottom: 10px;
+  }
+  .btn-copy {
+    width: 100%; padding: 12px; font-size: 14px; font-weight: 600;
+    border-radius: 10px; border: none;
+    background: var(--accent); color: #000;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s;
+  }
+  .btn-copy:active { opacity: 0.8; }
+  .btn-copy.copied { background: var(--green); color: #000; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <div class="logo-mark"><i class="ti ti-lighthouse"></i></div>
+    <div>
+      <div class="logo-text">Маяк</div>
+      <div class="logo-sub">Замер базы — 1 час</div>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="timer-block">
+      <div class="timer-label">Осталось</div>
+      <div class="timer-display" id="timerDisplay">60:00</div>
+    </div>
+    <div class="controls">
+      <div class="btn-row">
+        <button class="btn" id="btnStart" onclick="toggleTimer()"><i class="ti ti-player-play"></i> Старт</button>
+        <button class="btn" id="btnPause" onclick="togglePause()" disabled><i class="ti ti-player-pause"></i> Пауза</button>
+        <button class="btn danger" id="btnFinish" onclick="finishEarly()" disabled title="Завершить досрочно"><i class="ti ti-player-stop"></i></button>
+      </div>
+      <div class="time-row" id="timeRow" style="display:none">
+        <span>Старт: <b id="tStart">—</b></span><br>
+        <span>Конец: <b id="tEnd">—</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+  <div class="grid">
+    <div class="card card-nabory disabled" id="cNabory" onclick="hit('nabory')">
+      <div class="flash" id="fNabory"></div>
+      <div class="card-icon"><i class="ti ti-phone"></i></div>
+      <div class="card-title">Наборы</div>
+      <div class="card-hint">Любой набранный номер</div>
+      <div class="card-count" id="vNabory">0</div>
+      <div class="card-adds">+1 набор</div>
+    </div>
+    <div class="card card-doz disabled" id="cDoz" onclick="hit('doz')">
+      <div class="flash" id="fDoz"></div>
+      <div class="card-icon"><i class="ti ti-phone-check"></i></div>
+      <div class="card-title">Дозвоны</div>
+      <div class="card-hint">Абонент ответил</div>
+      <div class="card-count" id="vDoz">0</div>
+      <div class="card-adds">+1 набор · +1 дозвон</div>
+    </div>
+    <div class="card card-dial disabled" id="cDial" onclick="hit('dial')">
+      <div class="flash" id="fDial"></div>
+      <div class="card-icon"><i class="ti ti-messages"></i></div>
+      <div class="card-title">Диалоги</div>
+      <div class="card-hint">Разговор более 60 сек</div>
+      <div class="card-count" id="vDial">0</div>
+      <div class="card-adds">+1 набор · +1 дозвон · +1 диалог</div>
+    </div>
+    <div class="card card-naz disabled" id="cNaz" onclick="hit('naz')">
+      <div class="flash" id="fNaz"></div>
+      <div class="card-icon"><i class="ti ti-calendar-check"></i></div>
+      <div class="card-title">Назначения</div>
+      <div class="card-hint">Встреча назначена</div>
+      <div class="card-count" id="vNaz">0</div>
+      <div class="card-adds">+1 к каждой категории</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="conv-rate" id="convRate">Конверсия: нет данных</div>
+    <button class="btn-reset" onclick="resetAll()"><i class="ti ti-refresh"></i> Сбросить</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><i class="ti ti-coffee" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>История перерывов</div>
+    <div id="breaksList"><span class="no-breaks">Перерывов пока не было</span></div>
+  </div>
+
+  <div class="section report-box" id="reportBox">
+    <div class="section-title"><i class="ti ti-send" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Отчёт для мессенджера</div>
+    <div class="report-text" id="reportText"></div>
+    <button class="btn-copy" id="btnCopy" onclick="copyReport()"><i class="ti ti-copy"></i> Скопировать</button>
+  </div>
+
+</div>
+<script>
+  var DURATION = 60 * 60;
+  var remaining = DURATION;
+  var running = false, paused = false, finished = false;
+  var interval = null;
+  var startTime = null, endTime = null, realEndTime = null;
+  var totalPauseMs = 0;        // накопленное время на паузе
+  var pauseStartTs = null;     // момент начала текущей паузы (Date)
+  var counts = { nabory: 0, doz: 0, dial: 0, naz: 0 };
+  var breaks = [], currentBreakStart = null;
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function fmtFull(d) { return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()); }
+  function fmtShort(d) { return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function fmtDur(ms) {
+    var s = Math.round(ms / 1000), m = Math.floor(s / 60), sec = s % 60;
+    return m > 0 ? m + ' мин ' + sec + ' сек' : sec + ' сек';
+  }
+
+  function updateEndDisplay() {
+    // Предполагаемый конец = старт + 1 час + весь накопленный перерыв
+    var extraMs = totalPauseMs + (pauseStartTs ? (Date.now() - pauseStartTs) : 0);
+    var projected = new Date(startTime.getTime() + DURATION * 1000 + extraMs);
+    document.getElementById('tEnd').textContent = fmtFull(projected);
+  }
+
+  function updateTimer() {
+    var m = Math.floor(remaining / 60), s = remaining % 60;
+    var el = document.getElementById('timerDisplay');
+    el.textContent = pad(m) + ':' + pad(s);
+    el.className = 'timer-display' + (paused ? ' paused' : remaining <= 0 ? ' over' : remaining <= 300 ? ' warn' : '');
+    var pct = ((DURATION - remaining) / DURATION * 100).toFixed(1);
+    var fill = document.getElementById('progressFill');
+    fill.style.width = pct + '%';
+    fill.style.background = remaining <= 0 ? 'var(--red)' : remaining <= 300 ? 'var(--accent)' : 'var(--green)';
+    if (running && paused) updateEndDisplay();
+  }
+
+  function toggleTimer() {
+    if (finished) return;
+    if (!running) {
+      running = true; paused = false;
+      startTime = new Date();
+      endTime = new Date(startTime.getTime() + DURATION * 1000);
+      document.getElementById('tStart').textContent = fmtFull(startTime);
+      document.getElementById('tEnd').textContent = fmtFull(endTime);
+      document.getElementById('timeRow').style.display = 'block';
+      var btn = document.getElementById('btnStart');
+      btn.className = 'btn green';
+      btn.innerHTML = '<i class="ti ti-player-play"></i> Идёт замер';
+      document.getElementById('btnPause').disabled = false;
+      document.getElementById('btnFinish').disabled = false;
+      enableCards(true);
+      startInterval();
+    }
+  }
+
+  function startInterval() {
+    interval = setInterval(function() {
+      if (paused) {
+        updateEndDisplay(); // сдвигаем время конца каждую секунду пока пауза
+        return;
+      }
+      remaining--;
+      updateTimer();
+      if (remaining <= 0) {
+        clearInterval(interval);
+        running = false; finished = true;
+        realEndTime = new Date();
+        if (paused) resumeBreak(true);
+        document.getElementById('btnStart').className = 'btn done';
+        document.getElementById('btnStart').innerHTML = '<i class="ti ti-check"></i> Замер завершён';
+        document.getElementById('btnPause').disabled = true;
+        document.getElementById('btnFinish').disabled = true;
+        enableCards(false);
+        updateConv();
+        showReport();
+      }
+    }, 1000);
+  }
+
+  function togglePause() {
+    if (!running || finished) return;
+    if (!paused) {
+      paused = true;
+      currentBreakStart = new Date();
+      pauseStartTs = new Date();
+      enableCards(false);
+      var bp = document.getElementById('btnPause');
+      bp.className = 'btn amber';
+      bp.innerHTML = '<i class="ti ti-player-play"></i> Продолжить';
+      updateTimer();
+      renderBreaks();
+    } else {
+      resumeBreak(false);
+    }
+  }
+
+  function resumeBreak(silent) {
+    if (!currentBreakStart) return;
+    var endB = new Date();
+    var dur = endB - currentBreakStart;
+    breaks.push({ start: currentBreakStart, end: endB, dur: dur });
+    totalPauseMs += dur;
+    pauseStartTs = null;
+    currentBreakStart = null;
+    paused = false;
+    updateEndDisplay(); // зафиксировать новое время конца
+    if (!silent) {
+      enableCards(true);
+      var bp = document.getElementById('btnPause');
+      bp.className = 'btn';
+      bp.innerHTML = '<i class="ti ti-player-pause"></i> Пауза';
+    }
+    updateTimer();
+    renderBreaks();
+  }
+
+  function renderBreaks() {
+    var el = document.getElementById('breaksList'), html = '';
+    breaks.forEach(function(b, i) {
+      html += '<div class="break-item"><span class="break-num">#' + (i+1) + '</span><span class="break-times">' + fmtFull(b.start) + ' — ' + fmtFull(b.end) + '</span><span class="break-dur">' + fmtDur(b.dur) + '</span></div>';
+    });
+    if (paused && currentBreakStart) {
+      html += '<div class="break-item break-active"><span class="break-num">#' + (breaks.length+1) + '</span><span class="break-times">' + fmtFull(currentBreakStart) + ' — сейчас</span><span class="break-dur">в процессе</span></div>';
+    }
+    el.innerHTML = html || '<span class="no-breaks">Перерывов пока не было</span>';
+  }
+
+  function showReport() {
+    var breaksStr = breaks.length
+      ? ' (перерывы ' + breaks.map(function(b) { return fmtShort(b.start) + '–' + fmtShort(b.end); }).join(', ') + ')'
+      : '';
+    var endDisplay = realEndTime ? fmtShort(realEndTime) : fmtShort(endTime);
+    var convParts = [];
+    if (counts.nabory > 0) convParts.push('в дозвон ' + Math.round(counts.doz / counts.nabory * 100) + '%');
+    if (counts.doz > 0)    convParts.push('в диалог ' + Math.round(counts.dial / counts.doz * 100) + '%');
+    if (counts.dial > 0)   convParts.push('в назначение ' + Math.round(counts.naz / counts.dial * 100) + '%');
+    var convLine = convParts.length ? '\n\nКонверсия ' + convParts.join(', ') + '.' : '';
+    var text = 'Замер ' + fmtShort(startTime) + '–' + endDisplay + breaksStr + '\n'
+      + 'Наборы ' + counts.nabory + '\n'
+      + 'Дозвоны ' + counts.doz + '\n'
+      + 'Диалоги ' + counts.dial + '\n'
+      + 'Назначения ' + counts.naz
+      + convLine;
+    document.getElementById('reportText').textContent = text;
+    document.getElementById('reportBox').className = 'section report-box visible';
+  }
+
+  function finishEarly() {
+    if (!running || finished) return;
+    clearInterval(interval);
+    running = false; finished = true;
+    realEndTime = new Date();
+    if (paused) resumeBreak(true);
+    document.getElementById('btnStart').className = 'btn done';
+    document.getElementById('btnStart').innerHTML = '<i class="ti ti-check"></i> Замер завершён';
+    document.getElementById('btnPause').disabled = true;
+    document.getElementById('btnFinish').disabled = true;
+    enableCards(false);
+    updateConv();
+    showReport();
+  }
+
+  function copyReport() {
+    var text = document.getElementById('reportText').textContent;
+    var btn = document.getElementById('btnCopy');
+    function markCopied() {
+      btn.className = 'btn-copy copied';
+      btn.innerHTML = '<i class="ti ti-check"></i> Скопировано!';
+      setTimeout(function() {
+        btn.className = 'btn-copy';
+        btn.innerHTML = '<i class="ti ti-copy"></i> Скопировать';
+      }, 2000);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(markCopied);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+      markCopied();
+    }
+  }
+
+  function enableCards(on) {
+    ['cNabory','cDoz','cDial','cNaz'].forEach(function(id) {
+      document.getElementById(id).classList[on ? 'remove' : 'add']('disabled');
+    });
+  }
+
+  function hit(type) {
+    if (!running || paused) return;
+    if (type === 'nabory') counts.nabory++;
+    else if (type === 'doz')  { counts.nabory++; counts.doz++; }
+    else if (type === 'dial') { counts.nabory++; counts.doz++; counts.dial++; }
+    else if (type === 'naz')  { counts.nabory++; counts.doz++; counts.dial++; counts.naz++; }
+    document.getElementById('vNabory').textContent = counts.nabory;
+    document.getElementById('vDoz').textContent = counts.doz;
+    document.getElementById('vDial').textContent = counts.dial;
+    document.getElementById('vNaz').textContent = counts.naz;
+    var fEl = document.getElementById({ nabory:'fNabory', doz:'fDoz', dial:'fDial', naz:'fNaz' }[type]);
+    fEl.style.animation = 'none'; fEl.offsetHeight;
+    fEl.style.animation = 'flashAnim 0.3s ease-out forwards';
+    updateConv();
+  }
+
+  function updateConv() {
+    var parts = [];
+    if (counts.nabory > 0) parts.push('дозвон ' + Math.round(counts.doz / counts.nabory * 100) + '%');
+    if (counts.doz > 0)    parts.push('диалог ' + Math.round(counts.dial / counts.doz * 100) + '%');
+    if (counts.dial > 0)   parts.push('назначение ' + Math.round(counts.naz / counts.dial * 100) + '%');
+    document.getElementById('convRate').innerHTML = parts.length ? 'Конверсия: <b>' + parts.join(' · ') + '</b>' : 'Конверсия: нет данных';
+  }
+
+  function resetAll() {
+    clearInterval(interval);
+    running = false; paused = false; finished = false;
+    remaining = DURATION; startTime = null; endTime = null; realEndTime = null;
+    totalPauseMs = 0; pauseStartTs = null;
+    counts = { nabory: 0, doz: 0, dial: 0, naz: 0 };
+    breaks = []; currentBreakStart = null;
+    document.getElementById('vNabory').textContent = '0';
+    document.getElementById('vDoz').textContent = '0';
+    document.getElementById('vDial').textContent = '0';
+    document.getElementById('vNaz').textContent = '0';
+    document.getElementById('timerDisplay').textContent = '60:00';
+    document.getElementById('timerDisplay').className = 'timer-display';
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressFill').style.background = 'var(--green)';
+    document.getElementById('timeRow').style.display = 'none';
+    document.getElementById('tStart').textContent = '—';
+    document.getElementById('tEnd').textContent = '—';
+    document.getElementById('btnStart').className = 'btn';
+    document.getElementById('btnStart').innerHTML = '<i class="ti ti-player-play"></i> Старт';
+    document.getElementById('btnPause').className = 'btn';
+    document.getElementById('btnPause').innerHTML = '<i class="ti ti-player-pause"></i> Пауза';
+    document.getElementById('btnPause').disabled = true;
+    document.getElementById('btnFinish').disabled = true;
+    document.getElementById('reportBox').className = 'section report-box';
+    enableCards(false);
+    updateConv();
+    renderBreaks();
+  }
+</script>
+</body>
+</html>
