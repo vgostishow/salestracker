@@ -262,8 +262,10 @@
     }
 
     if(remaining <= 0){
-      onFinish();
-      return;
+      // Таймер на нуле — замираем, не завершаем автоматически
+      remaining = 0;
+      renderTimer();
+      return; // карточки остаются активны до ручного завершения
     }
     rafId = requestAnimationFrame(tick);
   }
@@ -273,6 +275,12 @@
     var el = document.getElementById('timerDisplay');
     el.textContent = pad(m)+':'+pad(s);
     el.className = 'timer-display'+(paused?' paused':remaining<=0?' over':remaining<=300?' warn':'');
+    // Когда время вышло — кнопка старта меняет лейбл, но замер продолжается
+    if(remaining <= 0 && running && !finished){
+      var bs = document.getElementById('btnStart');
+      bs.className = 'btn amber';
+      bs.innerHTML = '<i class="ti ti-clock-exclamation"></i> Сверхурочно';
+    }
     var pct = ((DURATION-remaining)/DURATION*100).toFixed(2);
     var fill = document.getElementById('progressFill');
     fill.style.width = pct+'%';
