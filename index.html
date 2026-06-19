@@ -3,21 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Замер базы — Маяк</title>
+<title>Маяк — Трекер звонков</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   :root {
-    --bg:       #0f1117;
-    --surface:  #1a1d27;
-    --surface2: #22263a;
-    --border:   #2e3148;
-    --text:     #f0f2ff;
-    --muted:    #7a7f9a;
-    --accent:   #f5a623;
-    --green:    #3ecf8e;
-    --green-bg: #0d2e21;
-    --red:      #e05252;
-    --radius:   14px;
+    --bg:        #F8F6F2;
+    --surface:   #FFFFFF;
+    --surface2:  #F1EEE7;
+    --border:    #E4E0D6;
+    --text:      #1A1A1A;
+    --muted:     #8A8478;
+    --blue:      #3172C3;
+    --blue-bg:   #E9F0FA;
+    --red:       #EC6463;
+    --red-bg:    #FCEAEA;
+    --white:     #FFFFFF;
+    --radius:    14px;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -30,216 +31,321 @@
   }
   .container { width: 100%; max-width: 480px; }
 
-  .topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
-  .logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 18px; color: #000; flex-shrink: 0; }
-  .logo-text { font-size: 15px; font-weight: 600; color: var(--text); }
-  .logo-sub  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  /* Logo */
+  .topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+  .logo-mark { width: 36px; height: 36px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo-mark svg { width: 20px; height: 20px; }
+  .logo-text { font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: 0.5px; }
+  .logo-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; background: var(--surface2); border-radius: 12px; padding: 4px; margin-bottom: 1rem; }
+  .tab { flex: 1; padding: 9px 0; text-align: center; font-size: 13px; font-weight: 600; border-radius: 9px; cursor: pointer; color: var(--muted); -webkit-tap-highlight-color: transparent; transition: background 0.15s, color 0.15s; }
+  .tab.active { background: var(--surface); color: var(--blue); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .tab i { margin-right: 5px; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Timer header card */
   .header { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; margin-bottom: 1rem; }
   .timer-block { display: flex; flex-direction: column; align-items: center; }
   .timer-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
-  .timer-display { font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--text); letter-spacing: 1px; }
-  .timer-display.warn   { color: var(--accent); }
+  .timer-display { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); letter-spacing: 1px; }
+  .timer-display.warn   { color: var(--red); }
   .timer-display.over   { color: var(--red); }
   .timer-display.paused { color: var(--muted); }
 
   .controls { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
   .time-row { font-size: 11px; color: var(--muted); text-align: right; line-height: 1.7; }
-  .time-row b { color: var(--text); font-weight: 500; }
+  .time-row b { color: var(--text); font-weight: 600; }
   .btn-row { display: flex; gap: 7px; }
 
-  .btn { padding: 9px 14px; font-size: 13px; font-weight: 500; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
-  .btn:active:not(:disabled) { opacity: 0.7; }
-  .btn:disabled { opacity: 0.3; cursor: default; }
-  .btn.green  { background: var(--green-bg); color: var(--green); border-color: var(--green); }
-  .btn.amber  { background: #2e1f00; color: var(--accent); border-color: var(--accent); }
-  .btn.done   { background: var(--surface); color: var(--muted); cursor: default; }
+  .btn { padding: 9px 14px; font-size: 13px; font-weight: 600; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
+  .btn:active:not(:disabled) { opacity: 0.65; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn.blue   { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); }
+  .btn.amber  { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+  .btn.done   { background: var(--surface2); color: var(--muted); cursor: default; }
   .btn.danger { border-color: var(--red); color: var(--red); }
 
   .progress-bar { width: 100%; height: 3px; background: var(--surface2); border-radius: 2px; margin-bottom: 1rem; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: background 1s; }
+  .progress-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: background 1s; }
 
   /* Cards */
   .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1rem; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; position: relative; overflow: hidden; }
-  .card.disabled { opacity: 0.3; pointer-events: none; }
-  .card-icon  { font-size: 20px; margin-bottom: 5px; color: var(--muted); }
-  .card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 1px; }
+  .card.disabled { opacity: 0.4; pointer-events: none; }
+  .card-icon  { font-size: 20px; margin-bottom: 5px; color: var(--blue); }
+  .card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 1px; }
   .card-hint  { font-size: 11px; color: var(--muted); margin-bottom: 6px; line-height: 1.4; }
 
-  /* Hit zone — big tap area */
   .card-hit { cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
-  .card-hit:active .card-count { opacity: 0.7; }
-  .card-count { font-size: 38px; font-weight: 600; color: var(--accent); line-height: 1; }
+  .card-hit:active .card-count { opacity: 0.6; }
+  .card-count { font-size: 38px; font-weight: 800; color: var(--red); line-height: 1; }
   .card-adds  { font-size: 10px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
 
-  /* +/- row */
   .card-controls { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
-  .cc-btn { flex: 1; padding: 6px 0; font-size: 18px; font-weight: 600; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; -webkit-tap-highlight-color: transparent; line-height: 1; text-align: center; }
+  .cc-btn { flex: 1; padding: 6px 0; font-size: 18px; font-weight: 700; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; -webkit-tap-highlight-color: transparent; line-height: 1; text-align: center; }
   .cc-btn.minus { color: var(--muted); }
   .cc-btn.minus:active { color: var(--red); border-color: var(--red); }
-  .cc-btn.plus:active  { color: var(--green); border-color: var(--green); }
-  .cc-btn:disabled { opacity: 0.2; cursor: default; }
+  .cc-btn.plus:active  { color: var(--blue); border-color: var(--blue); }
+  .cc-btn:disabled { opacity: 0.25; cursor: default; }
 
-  .flash { position: absolute; inset: 0; border-radius: var(--radius); pointer-events: none; opacity: 0; background: rgba(245,166,35,0.10); }
+  .flash { position: absolute; inset: 0; border-radius: var(--radius); pointer-events: none; opacity: 0; background: rgba(49,114,195,0.10); }
   @keyframes flashAnim { 0%{opacity:1} 100%{opacity:0} }
 
   .footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
   .conv-rate { font-size: 12px; color: var(--muted); }
-  .conv-rate b { color: var(--text); font-weight: 500; }
+  .conv-rate b { color: var(--text); font-weight: 600; }
   .btn-reset { padding: 6px 12px; font-size: 12px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .btn-reset:active { color: var(--text); }
 
   .section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 10px; }
-  .section-title { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 8px; }
+  .section-title { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
 
   .break-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 8px; background: var(--surface2); margin-bottom: 5px; font-size: 12px; }
-  .break-num  { font-size: 10px; font-weight: 500; color: var(--muted); min-width: 18px; }
+  .break-num  { font-size: 10px; font-weight: 600; color: var(--muted); min-width: 18px; }
   .break-times { color: var(--text); }
-  .break-dur  { margin-left: auto; color: var(--accent); background: #2e1f00; padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 500; white-space: nowrap; }
-  .break-active { background: #1e1800; border: 1px dashed var(--accent); }
+  .break-dur  { margin-left: auto; color: var(--red); background: var(--red-bg); padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .break-active { background: var(--red-bg); border: 1px dashed var(--red); }
   .no-breaks  { font-size: 12px; color: var(--muted); }
 
   .report-box { display: none; }
   .report-box.visible { display: block; }
-  .report-text { font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.75; color: var(--text); background: var(--bg); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; word-break: break-word; border: 1px solid var(--border); margin-bottom: 10px; }
-  .btn-copy { width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 10px; border: none; background: var(--accent); color: #000; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .report-text { font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.75; color: var(--text); background: var(--surface2); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; word-break: break-word; border: 1px solid var(--border); margin-bottom: 10px; }
+  .btn-copy { width: 100%; padding: 12px; font-size: 14px; font-weight: 700; border-radius: 10px; border: none; background: var(--blue); color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   .btn-copy:active  { opacity: 0.8; }
-  .btn-copy.copied  { background: var(--green); }
+  .btn-copy.copied  { background: #2E9E5B; }
+
+  /* Workday view specifics */
+  .workday-card .card-count { color: var(--blue); }
+  .wd-actions { display: flex; gap: 8px; margin-bottom: 1rem; }
+  .wd-actions .btn { flex: 1; justify-content: center; display: flex; align-items: center; gap: 6px; }
+  .wd-sub { font-size: 12px; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; }
+  .wd-sub b { color: var(--text); }
 </style>
 </head>
 <body>
 <div class="container">
 
   <div class="topbar">
-    <div class="logo-mark"><i class="ti ti-lighthouse"></i></div>
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3L2 8l10 5 8-4.2V15h1.5V8L12 3z" fill="white"/>
+        <path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5L12 14l-6-2.5z" fill="white"/>
+      </svg>
+    </div>
     <div>
-      <div class="logo-text">Маяк</div>
-      <div class="logo-sub">Замер базы — 1 час</div>
+      <div class="logo-text">МАЯК</div>
+      <div class="logo-sub">Образовательный центр</div>
     </div>
   </div>
 
-  <div class="header">
-    <div class="timer-block">
-      <div class="timer-label">Осталось</div>
-      <div class="timer-display" id="timerDisplay">60:00</div>
-    </div>
-    <div class="controls">
-      <div class="btn-row">
-        <button class="btn" id="btnStart"  onclick="toggleTimer()"><i class="ti ti-player-play"></i> Старт</button>
-        <button class="btn" id="btnPause"  onclick="togglePause()"  disabled><i class="ti ti-player-pause"></i> Пауза</button>
-        <button class="btn danger" id="btnFinish" onclick="finishEarly()" disabled title="Завершить досрочно"><i class="ti ti-player-stop"></i></button>
-      </div>
-      <div class="time-row" id="timeRow" style="display:none">
-        <span>Старт: <b id="tStart">—</b></span><br>
-        <span>Конец: <b id="tEnd">—</b></span>
-      </div>
-    </div>
+  <div class="tabs">
+    <div class="tab active" id="tabMeasureBtn" onclick="switchTab('measure')"><i class="ti ti-stopwatch"></i>Замер</div>
+    <div class="tab" id="tabWorkdayBtn" onclick="switchTab('workday')"><i class="ti ti-briefcase"></i>Рабочий день</div>
   </div>
 
-  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <!-- ============ ВКЛАДКА: ЗАМЕР (1 ЧАС) ============ -->
+  <div class="view active" id="viewMeasure">
 
-  <div class="grid">
-
-    <div class="card disabled" id="cNabory">
-      <div class="flash" id="fNabory"></div>
-      <div class="card-icon"><i class="ti ti-phone"></i></div>
-      <div class="card-title">Наборы</div>
-      <div class="card-hint">Любой набранный номер</div>
-      <div class="card-hit" onclick="hit('nabory')">
-        <div class="card-count" id="vNabory">0</div>
-        <div class="card-adds">+1 набор</div>
+    <div class="header">
+      <div class="timer-block">
+        <div class="timer-label">Осталось</div>
+        <div class="timer-display" id="timerDisplay">60:00</div>
       </div>
-      <div class="card-controls">
-        <button class="cc-btn minus" onclick="adj('nabory',-1)" disabled id="mNabory">−</button>
-        <button class="cc-btn plus"  onclick="hit('nabory')"    disabled id="pNabory">+</button>
+      <div class="controls">
+        <div class="btn-row">
+          <button class="btn" id="btnStart"  onclick="toggleTimer()"><i class="ti ti-player-play"></i> Старт</button>
+          <button class="btn" id="btnPause"  onclick="togglePause()"  disabled><i class="ti ti-player-pause"></i> Пауза</button>
+          <button class="btn danger" id="btnFinish" onclick="finishEarly()" disabled title="Завершить замер"><i class="ti ti-player-stop"></i></button>
+        </div>
+        <div class="time-row" id="timeRow" style="display:none">
+          <span>Старт: <b id="tStart">—</b></span><br>
+          <span>Конец: <b id="tEnd">—</b></span>
+        </div>
       </div>
     </div>
 
-    <div class="card disabled" id="cDoz">
-      <div class="flash" id="fDoz"></div>
-      <div class="card-icon"><i class="ti ti-phone-check"></i></div>
-      <div class="card-title">Дозвоны</div>
-      <div class="card-hint">Абонент ответил</div>
-      <div class="card-hit" onclick="hit('doz')">
-        <div class="card-count" id="vDoz">0</div>
-        <div class="card-adds">+1 набор · +1 дозвон</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+    <div class="grid">
+      <div class="card disabled" id="cNabory">
+        <div class="flash" id="fNabory"></div>
+        <div class="card-icon"><i class="ti ti-phone"></i></div>
+        <div class="card-title">Наборы</div>
+        <div class="card-hint">Любой набранный номер</div>
+        <div class="card-hit" onclick="hit('nabory')">
+          <div class="card-count" id="vNabory">0</div>
+          <div class="card-adds">+1 набор</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adj('nabory',-1)" disabled id="mNabory">−</button>
+          <button class="cc-btn plus"  onclick="hit('nabory')"    disabled id="pNabory">+</button>
+        </div>
       </div>
-      <div class="card-controls">
-        <button class="cc-btn minus" onclick="adj('doz',-1)" disabled id="mDoz">−</button>
-        <button class="cc-btn plus"  onclick="hit('doz')"    disabled id="pDoz">+</button>
+
+      <div class="card disabled" id="cDoz">
+        <div class="flash" id="fDoz"></div>
+        <div class="card-icon"><i class="ti ti-phone-check"></i></div>
+        <div class="card-title">Дозвоны</div>
+        <div class="card-hint">Абонент ответил</div>
+        <div class="card-hit" onclick="hit('doz')">
+          <div class="card-count" id="vDoz">0</div>
+          <div class="card-adds">+1 набор · +1 дозвон</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adj('doz',-1)" disabled id="mDoz">−</button>
+          <button class="cc-btn plus"  onclick="hit('doz')"    disabled id="pDoz">+</button>
+        </div>
+      </div>
+
+      <div class="card disabled" id="cDial">
+        <div class="flash" id="fDial"></div>
+        <div class="card-icon"><i class="ti ti-messages"></i></div>
+        <div class="card-title">Диалоги</div>
+        <div class="card-hint">Разговор более 60 сек</div>
+        <div class="card-hit" onclick="hit('dial')">
+          <div class="card-count" id="vDial">0</div>
+          <div class="card-adds">+1 набор · +1 дозвон · +1 диалог</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adj('dial',-1)" disabled id="mDial">−</button>
+          <button class="cc-btn plus"  onclick="hit('dial')"    disabled id="pDial">+</button>
+        </div>
+      </div>
+
+      <div class="card disabled" id="cNaz">
+        <div class="flash" id="fNaz"></div>
+        <div class="card-icon"><i class="ti ti-calendar-check"></i></div>
+        <div class="card-title">Назначения</div>
+        <div class="card-hint">Встреча назначена</div>
+        <div class="card-hit" onclick="hit('naz')">
+          <div class="card-count" id="vNaz">0</div>
+          <div class="card-adds">+1 к каждой категории</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adj('naz',-1)" disabled id="mNaz">−</button>
+          <button class="cc-btn plus"  onclick="hit('naz')"    disabled id="pNaz">+</button>
+        </div>
       </div>
     </div>
 
-    <div class="card disabled" id="cDial">
-      <div class="flash" id="fDial"></div>
-      <div class="card-icon"><i class="ti ti-messages"></i></div>
-      <div class="card-title">Диалоги</div>
-      <div class="card-hint">Разговор более 60 сек</div>
-      <div class="card-hit" onclick="hit('dial')">
-        <div class="card-count" id="vDial">0</div>
-        <div class="card-adds">+1 набор · +1 дозвон · +1 диалог</div>
-      </div>
-      <div class="card-controls">
-        <button class="cc-btn minus" onclick="adj('dial',-1)" disabled id="mDial">−</button>
-        <button class="cc-btn plus"  onclick="hit('dial')"    disabled id="pDial">+</button>
-      </div>
+    <div class="footer">
+      <div class="conv-rate" id="convRate">Конверсия: нет данных</div>
+      <button class="btn-reset" onclick="resetAll()"><i class="ti ti-refresh"></i> Сбросить</button>
     </div>
 
-    <div class="card disabled" id="cNaz">
-      <div class="flash" id="fNaz"></div>
-      <div class="card-icon"><i class="ti ti-calendar-check"></i></div>
-      <div class="card-title">Назначения</div>
-      <div class="card-hint">Встреча назначена</div>
-      <div class="card-hit" onclick="hit('naz')">
-        <div class="card-count" id="vNaz">0</div>
-        <div class="card-adds">+1 к каждой категории</div>
-      </div>
-      <div class="card-controls">
-        <button class="cc-btn minus" onclick="adj('naz',-1)" disabled id="mNaz">−</button>
-        <button class="cc-btn plus"  onclick="hit('naz')"    disabled id="pNaz">+</button>
-      </div>
+    <div class="section">
+      <div class="section-title"><i class="ti ti-coffee" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>История перерывов</div>
+      <div id="breaksList"><span class="no-breaks">Перерывов пока не было</span></div>
+    </div>
+
+    <div class="section report-box" id="reportBox">
+      <div class="section-title"><i class="ti ti-send" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Отчёт для мессенджера</div>
+      <div class="report-text" id="reportText"></div>
+      <button class="btn-copy" id="btnCopy" onclick="copyReport()"><i class="ti ti-copy"></i> Скопировать</button>
     </div>
 
   </div>
 
-  <div class="footer">
-    <div class="conv-rate" id="convRate">Конверсия: нет данных</div>
-    <button class="btn-reset" onclick="resetAll()"><i class="ti ti-refresh"></i> Сбросить</button>
-  </div>
+  <!-- ============ ВКЛАДКА: РАБОЧИЙ ДЕНЬ ============ -->
+  <div class="view" id="viewWorkday">
 
-  <div class="section">
-    <div class="section-title"><i class="ti ti-coffee" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>История перерывов</div>
-    <div id="breaksList"><span class="no-breaks">Перерывов пока не было</span></div>
-  </div>
+    <div class="wd-sub">Считает <b>весь день</b>, без таймера. Каждый клик здесь и во вкладке «Замер» суммируется в общий итог дня.</div>
 
-  <div class="section report-box" id="reportBox">
-    <div class="section-title"><i class="ti ti-send" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Отчёт для мессенджера</div>
-    <div class="report-text" id="reportText"></div>
-    <button class="btn-copy" id="btnCopy" onclick="copyReport()"><i class="ti ti-copy"></i> Скопировать</button>
+    <div class="grid">
+      <div class="card workday-card" id="wcNabory">
+        <div class="flash" id="wfNabory"></div>
+        <div class="card-icon"><i class="ti ti-phone"></i></div>
+        <div class="card-title">Наборы</div>
+        <div class="card-hint">Любой набранный номер</div>
+        <div class="card-hit" onclick="hitWd('nabory')">
+          <div class="card-count" id="wvNabory">0</div>
+          <div class="card-adds">+1 набор</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adjWd('nabory',-1)">−</button>
+          <button class="cc-btn plus"  onclick="hitWd('nabory')">+</button>
+        </div>
+      </div>
+
+      <div class="card workday-card" id="wcDoz">
+        <div class="flash" id="wfDoz"></div>
+        <div class="card-icon"><i class="ti ti-phone-check"></i></div>
+        <div class="card-title">Дозвоны</div>
+        <div class="card-hint">Абонент ответил</div>
+        <div class="card-hit" onclick="hitWd('doz')">
+          <div class="card-count" id="wvDoz">0</div>
+          <div class="card-adds">+1 набор · +1 дозвон</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adjWd('doz',-1)">−</button>
+          <button class="cc-btn plus"  onclick="hitWd('doz')">+</button>
+        </div>
+      </div>
+
+      <div class="card workday-card" id="wcDial">
+        <div class="flash" id="wfDial"></div>
+        <div class="card-icon"><i class="ti ti-messages"></i></div>
+        <div class="card-title">Диалоги</div>
+        <div class="card-hint">Разговор более 60 сек</div>
+        <div class="card-hit" onclick="hitWd('dial')">
+          <div class="card-count" id="wvDial">0</div>
+          <div class="card-adds">+1 набор · +1 дозвон · +1 диалог</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adjWd('dial',-1)">−</button>
+          <button class="cc-btn plus"  onclick="hitWd('dial')">+</button>
+        </div>
+      </div>
+
+      <div class="card workday-card" id="wcNaz">
+        <div class="flash" id="wfNaz"></div>
+        <div class="card-icon"><i class="ti ti-calendar-check"></i></div>
+        <div class="card-title">Назначения</div>
+        <div class="card-hint">Встреча назначена</div>
+        <div class="card-hit" onclick="hitWd('naz')">
+          <div class="card-count" id="wvNaz">0</div>
+          <div class="card-adds">+1 к каждой категории</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adjWd('naz',-1)">−</button>
+          <button class="cc-btn plus"  onclick="hitWd('naz')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="conv-rate" id="convRateWd">Конверсия: нет данных</div>
+    </div>
+
+    <div class="wd-actions">
+      <button class="btn" onclick="summarizeWorkday()"><i class="ti ti-clipboard-check"></i> Подвести итог</button>
+      <button class="btn-reset" style="flex:1" onclick="resetWorkday()"><i class="ti ti-refresh"></i> Сбросить день</button>
+    </div>
+
+    <div class="section report-box" id="reportBoxWd">
+      <div class="section-title"><i class="ti ti-send" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Итог дня для мессенджера</div>
+      <div class="report-text" id="reportTextWd"></div>
+      <button class="btn-copy" id="btnCopyWd" onclick="copyReportWd()"><i class="ti ti-copy"></i> Скопировать</button>
+    </div>
+
   </div>
 
 </div>
 <script>
-  var DURATION = 3600; // секунд
-  var remaining  = DURATION;
-  var running    = false;
-  var paused     = false;
-  var finished   = false;
-  var rafId      = null;
+  // ============================================================
+  //  ОБЩЕЕ СОСТОЯНИЕ
+  // ============================================================
+  // counts        — счётчики текущего замера (1 час)
+  // workdayCounts — счётчики всего рабочего дня (суммирует ВСЁ:
+  //                 клики из замера автоматически идут и сюда,
+  //                 плюс отдельные клики во вкладке "Рабочий день")
+  var counts        = { nabory:0, doz:0, dial:0, naz:0 };
+  var workdayCounts = { nabory:0, doz:0, dial:0, naz:0 };
 
-  // Для точного таймера на основе реального времени
-  var startEpoch     = 0;  // Date.now() в момент старта/возобновления текущего отрезка
-  var elapsedBeforeMs = 0; // накоплено до последней паузы (мс)
-  var totalPauseMs   = 0;
-  var pauseStartTs   = null;
-
-  var startTime  = null;
-  var realEndTime = null;
-  var counts = { nabory:0, doz:0, dial:0, naz:0 };
-  var breaks = [], currentBreakStart = null;
-
-  // --- Форматирование ---
   function pad(n){ return n<10?'0'+n:''+n; }
   function fmtFull(d){ return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }
   function fmtShort(d){ return pad(d.getHours())+':'+pad(d.getMinutes()); }
@@ -248,24 +354,45 @@
     return m>0? m+' мин '+sec+' сек' : sec+' сек';
   }
 
-  // --- Основной цикл (requestAnimationFrame) ---
+  // ============================================================
+  //  ВКЛАДКИ
+  // ============================================================
+  function switchTab(name){
+    document.getElementById('viewMeasure').classList.toggle('active', name==='measure');
+    document.getElementById('viewWorkday').classList.toggle('active', name==='workday');
+    document.getElementById('tabMeasureBtn').classList.toggle('active', name==='measure');
+    document.getElementById('tabWorkdayBtn').classList.toggle('active', name==='workday');
+  }
+
+  // ============================================================
+  //  ЗАМЕР (1 ЧАС) — таймер
+  // ============================================================
+  var DURATION = 3600;
+  var remaining  = DURATION;
+  var running    = false;
+  var paused     = false;
+  var finished   = false;
+  var rafId      = null;
+
+  var startEpoch     = 0;
+  var elapsedBeforeMs = 0;
+  var totalPauseMs   = 0;
+  var pauseStartTs   = null;
+
+  var startTime  = null;
+  var realEndTime = null;
+  var breaks = [], currentBreakStart = null;
+
   function tick(){
     if(!running || paused){ return; }
-
-    var elapsed = elapsedBeforeMs + (Date.now() - startEpoch); // мс прошло активного времени
+    var elapsed = elapsedBeforeMs + (Date.now() - startEpoch);
     var rem = DURATION - Math.floor(elapsed / 1000);
     if(rem < 0) rem = 0;
-
-    if(rem !== remaining){
-      remaining = rem;
-      renderTimer();
-    }
-
+    if(rem !== remaining){ remaining = rem; renderTimer(); }
     if(remaining <= 0){
-      // Таймер на нуле — замираем, не завершаем автоматически
       remaining = 0;
       renderTimer();
-      return; // карточки остаются активны до ручного завершения
+      return; // не завершаем автоматически — ждём ручной стоп
     }
     rafId = requestAnimationFrame(tick);
   }
@@ -275,16 +402,15 @@
     var el = document.getElementById('timerDisplay');
     el.textContent = pad(m)+':'+pad(s);
     el.className = 'timer-display'+(paused?' paused':remaining<=0?' over':remaining<=300?' warn':'');
-    // Когда время вышло — кнопка старта меняет лейбл, но замер продолжается
+    var pct = ((DURATION-remaining)/DURATION*100).toFixed(2);
+    var fill = document.getElementById('progressFill');
+    fill.style.width = Math.min(pct,100)+'%';
+    fill.style.background = remaining<=0?'var(--red)':remaining<=300?'var(--red)':'var(--blue)';
     if(remaining <= 0 && running && !finished){
       var bs = document.getElementById('btnStart');
       bs.className = 'btn amber';
       bs.innerHTML = '<i class="ti ti-clock-exclamation"></i> Сверхурочно';
     }
-    var pct = ((DURATION-remaining)/DURATION*100).toFixed(2);
-    var fill = document.getElementById('progressFill');
-    fill.style.width = pct+'%';
-    fill.style.background = remaining<=0?'var(--red)':remaining<=300?'var(--accent)':'var(--green)';
     updateEndDisplay();
   }
 
@@ -295,7 +421,6 @@
     document.getElementById('tEnd').textContent = fmtFull(projected);
   }
 
-  // --- Старт / стоп ---
   function toggleTimer(){
     if(finished) return;
     if(!running){
@@ -307,7 +432,7 @@
       document.getElementById('timeRow').style.display = 'block';
       updateEndDisplay();
       var btn = document.getElementById('btnStart');
-      btn.className = 'btn green';
+      btn.className = 'btn blue';
       btn.innerHTML = '<i class="ti ti-player-play"></i> Идёт замер';
       document.getElementById('btnPause').disabled  = false;
       document.getElementById('btnFinish').disabled = false;
@@ -332,17 +457,15 @@
 
   function finishEarly(){
     if(!running || finished) return;
-    remaining = 0;
     onFinish();
   }
 
-  // --- Пауза ---
   function togglePause(){
     if(!running || finished) return;
     if(!paused){
       paused = true;
       cancelAnimationFrame(rafId);
-      elapsedBeforeMs += Date.now() - startEpoch; // сохраняем накопленное
+      elapsedBeforeMs += Date.now() - startEpoch;
       currentBreakStart = new Date();
       pauseStartTs = Date.now();
       enableCards(false);
@@ -353,7 +476,7 @@
       renderBreaks();
     } else {
       _commitBreak();
-      startEpoch = Date.now(); // новый отсчёт
+      startEpoch = Date.now();
       paused = false;
       enableCards(true);
       var bp = document.getElementById('btnPause');
@@ -390,22 +513,30 @@
     el.innerHTML = html || '<span class="no-breaks">Перерывов пока не было</span>';
   }
 
-  // --- Клики по карточкам ---
-  // hit: нажатие на карточку — прибавляет каскадно
+  // ============================================================
+  //  КЛИКИ — ЗАМЕР (каскад + дублирование в рабочий день)
+  // ============================================================
   function hit(type){
     if(!running || paused) return;
-    if(type==='nabory'){ counts.nabory++; }
-    else if(type==='doz') { counts.nabory++; counts.doz++; }
-    else if(type==='dial'){ counts.nabory++; counts.doz++; counts.dial++; }
-    else if(type==='naz') { counts.nabory++; counts.doz++; counts.dial++; counts.naz++; }
+    applyHit(counts, type);
+    applyHit(workdayCounts, type); // дублируем в общий день
     refreshUI(type);
+    refreshUIWd(type);
   }
 
-  // adj: кнопки +/- — меняют ТОЛЬКО одну категорию (без каскада)
   function adj(type, delta){
     if(!running || paused) return;
     counts[type] = Math.max(0, counts[type] + delta);
+    workdayCounts[type] = Math.max(0, workdayCounts[type] + delta); // дублируем
     refreshUI(type);
+    refreshUIWd(type);
+  }
+
+  function applyHit(obj, type){
+    if(type==='nabory'){ obj.nabory++; }
+    else if(type==='doz') { obj.nabory++; obj.doz++; }
+    else if(type==='dial'){ obj.nabory++; obj.doz++; obj.dial++; }
+    else if(type==='naz') { obj.nabory++; obj.doz++; obj.dial++; obj.naz++; }
   }
 
   function refreshUI(flashType){
@@ -415,11 +546,15 @@
     document.getElementById('vNaz').textContent    = counts.naz;
     if(flashType){
       var map = {nabory:'fNabory', doz:'fDoz', dial:'fDial', naz:'fNaz'};
-      var fEl = document.getElementById(map[flashType]);
-      fEl.style.animation='none'; fEl.offsetHeight;
-      fEl.style.animation='flashAnim 0.3s ease-out forwards';
+      flashEl(map[flashType]);
     }
     updateConv();
+  }
+
+  function flashEl(id){
+    var fEl = document.getElementById(id);
+    fEl.style.animation='none'; fEl.offsetHeight;
+    fEl.style.animation='flashAnim 0.3s ease-out forwards';
   }
 
   function updateConv(){
@@ -432,7 +567,6 @@
       : 'Конверсия: нет данных';
   }
 
-  // --- Включение / отключение карточек ---
   function enableCards(on){
     ['Nabory','Doz','Dial','Naz'].forEach(function(k){
       document.getElementById('c'+k).classList[on?'remove':'add']('disabled');
@@ -441,7 +575,6 @@
     });
   }
 
-  // --- Отчёт ---
   function showReport(){
     var breaksStr = breaks.length
       ? ' (перерывы '+breaks.map(function(b){ return fmtShort(b.start)+'–'+fmtShort(b.end); }).join(', ')+')'
@@ -462,13 +595,16 @@
     document.getElementById('reportBox').className = 'section report-box visible';
   }
 
-  function copyReport(){
-    var text = document.getElementById('reportText').textContent;
-    var btn  = document.getElementById('btnCopy');
+  function copyReport(){ copyText(document.getElementById('reportText').textContent, document.getElementById('btnCopy')); }
+  function copyReportWd(){ copyText(document.getElementById('reportTextWd').textContent, document.getElementById('btnCopyWd')); }
+
+  function copyText(text, btn){
     function done(){
+      var origHtml = btn.dataset.orig || btn.innerHTML;
+      btn.dataset.orig = origHtml;
       btn.className='btn-copy copied';
       btn.innerHTML='<i class="ti ti-check"></i> Скопировано!';
-      setTimeout(function(){ btn.className='btn-copy'; btn.innerHTML='<i class="ti ti-copy"></i> Скопировать'; },2000);
+      setTimeout(function(){ btn.className='btn-copy'; btn.innerHTML=origHtml; },2000);
     }
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(text).then(done);
@@ -481,7 +617,6 @@
     }
   }
 
-  // --- Сброс ---
   function resetAll(){
     cancelAnimationFrame(rafId);
     running=false; paused=false; finished=false;
@@ -493,7 +628,7 @@
     document.getElementById('timerDisplay').textContent='60:00';
     document.getElementById('timerDisplay').className='timer-display';
     document.getElementById('progressFill').style.width='0%';
-    document.getElementById('progressFill').style.background='var(--green)';
+    document.getElementById('progressFill').style.background='var(--blue)';
     document.getElementById('timeRow').style.display='none';
     document.getElementById('tStart').textContent='—';
     document.getElementById('tEnd').textContent='—';
@@ -507,6 +642,66 @@
     enableCards(false);
     updateConv();
     renderBreaks();
+  }
+
+  // ============================================================
+  //  РАБОЧИЙ ДЕНЬ — отдельные клики (тоже каскадные, но без таймера)
+  // ============================================================
+  function hitWd(type){
+    applyHit(workdayCounts, type);
+    refreshUIWd(type);
+  }
+
+  function adjWd(type, delta){
+    workdayCounts[type] = Math.max(0, workdayCounts[type] + delta);
+    refreshUIWd(type);
+  }
+
+  function refreshUIWd(flashType){
+    document.getElementById('wvNabory').textContent = workdayCounts.nabory;
+    document.getElementById('wvDoz').textContent    = workdayCounts.doz;
+    document.getElementById('wvDial').textContent   = workdayCounts.dial;
+    document.getElementById('wvNaz').textContent    = workdayCounts.naz;
+    if(flashType){
+      var map = {nabory:'wfNabory', doz:'wfDoz', dial:'wfDial', naz:'wfNaz'};
+      flashEl(map[flashType]);
+    }
+    updateConvWd();
+  }
+
+  function updateConvWd(){
+    var c = workdayCounts;
+    var parts=[];
+    if(c.nabory>0) parts.push('дозвон '+Math.round(c.doz/c.nabory*100)+'%');
+    if(c.doz>0)    parts.push('диалог '+Math.round(c.dial/c.doz*100)+'%');
+    if(c.dial>0)   parts.push('назначение '+Math.round(c.naz/c.dial*100)+'%');
+    document.getElementById('convRateWd').innerHTML = parts.length
+      ? 'Конверсия: <b>'+parts.join(' · ')+'</b>'
+      : 'Конверсия: нет данных';
+  }
+
+  function summarizeWorkday(){
+    var c = workdayCounts;
+    var convParts=[];
+    if(c.nabory>0) convParts.push('в дозвон '+Math.round(c.doz/c.nabory*100)+'%');
+    if(c.doz>0)    convParts.push('в диалог '+Math.round(c.dial/c.doz*100)+'%');
+    if(c.dial>0)   convParts.push('в назначение '+Math.round(c.naz/c.dial*100)+'%');
+    var convLine = convParts.length ? '\n\nКонверсия '+convParts.join(', ')+'.' : '';
+    var now = new Date();
+    var text = 'Итог дня на '+fmtShort(now)+'\n'
+             + 'Наборы '+c.nabory+'\n'
+             + 'Дозвоны '+c.doz+'\n'
+             + 'Диалоги '+c.dial+'\n'
+             + 'Назначения '+c.naz
+             + convLine;
+    document.getElementById('reportTextWd').textContent = text;
+    document.getElementById('reportBoxWd').className = 'section report-box visible';
+  }
+
+  function resetWorkday(){
+    workdayCounts={nabory:0,doz:0,dial:0,naz:0};
+    refreshUIWd(null);
+    document.getElementById('reportBoxWd').className = 'section report-box';
   }
 </script>
 </body>
