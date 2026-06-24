@@ -7,18 +7,17 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   :root {
-    --bg:        #F8F6F2;
-    --surface:   #FFFFFF;
-    --surface2:  #F1EEE7;
-    --border:    #E4E0D6;
-    --text:      #1A1A1A;
-    --muted:     #8A8478;
-    --blue:      #3172C3;
-    --blue-bg:   #E9F0FA;
-    --red:       #EC6463;
-    --red-bg:    #FCEAEA;
-    --white:     #FFFFFF;
-    --radius:    14px;
+    --bg:       #F8F6F2;
+    --surface:  #FFFFFF;
+    --surface2: #F1EEE7;
+    --border:   #E4E0D6;
+    --text:     #1A1A1A;
+    --muted:    #8A8478;
+    --blue:     #3172C3;
+    --blue-bg:  #E9F0FA;
+    --red:      #EC6463;
+    --red-bg:   #FCEAEA;
+    --radius:   14px;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -34,34 +33,36 @@
   /* Logo */
   .topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
   .logo-mark { width: 36px; height: 36px; border-radius: 50%; background: var(--red); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .logo-mark svg { width: 20px; height: 20px; }
-  .logo-text { font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: 0.5px; }
-  .logo-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .logo-text { font-size: 16px; font-weight: 800; color: var(--text); }
+  .logo-sub  { font-size: 11px; color: var(--muted); margin-top: 1px; }
 
   /* Tabs */
   .tabs { display: flex; gap: 6px; background: var(--surface2); border-radius: 12px; padding: 4px; margin-bottom: 1rem; }
   .tab { flex: 1; padding: 9px 0; text-align: center; font-size: 13px; font-weight: 600; border-radius: 9px; cursor: pointer; color: var(--muted); -webkit-tap-highlight-color: transparent; transition: background 0.15s, color 0.15s; }
   .tab.active { background: var(--surface); color: var(--blue); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .tab i { margin-right: 5px; }
-
+  .tab i { margin-right: 4px; }
   .view { display: none; }
   .view.active { display: block; }
 
-  /* Timer header card */
-  .header { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; margin-bottom: 1rem; }
-  .timer-block { display: flex; flex-direction: column; align-items: center; }
+  /* Timer header — stacks on narrow screens */
+  .header {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 0.9rem 1rem; margin-bottom: 1rem;
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .timer-block { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
   .timer-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
   .timer-display { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text); letter-spacing: 1px; }
   .timer-display.warn   { color: var(--red); }
   .timer-display.over   { color: var(--red); }
   .timer-display.paused { color: var(--muted); }
 
-  .controls { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
-  .time-row { font-size: 11px; color: var(--muted); text-align: right; line-height: 1.7; }
+  /* Button row wraps on small screens */
+  .btn-row { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+  .time-row { font-size: 11px; color: var(--muted); text-align: right; line-height: 1.7; margin-top: 6px; }
   .time-row b { color: var(--text); font-weight: 600; }
-  .btn-row { display: flex; gap: 7px; }
 
-  .btn { padding: 9px 14px; font-size: 13px; font-weight: 600; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
+  .btn { padding: 9px 13px; font-size: 13px; font-weight: 600; border-radius: 9px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
   .btn:active:not(:disabled) { opacity: 0.65; }
   .btn:disabled { opacity: 0.35; cursor: default; }
   .btn.blue   { background: var(--blue-bg); color: var(--blue); border-color: var(--blue); }
@@ -79,15 +80,14 @@
   .card-icon  { font-size: 20px; margin-bottom: 5px; color: var(--blue); }
   .card-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 1px; }
   .card-hint  { font-size: 11px; color: var(--muted); margin-bottom: 6px; line-height: 1.4; }
-
-  .card-hit { cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .card-hit   { cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
   .card-hit:active .card-count { opacity: 0.6; }
   .card-count { font-size: 38px; font-weight: 800; color: var(--red); line-height: 1; }
+  .card-count.blue { color: var(--blue); }
   .card-adds  { font-size: 10px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
 
-  .card-controls { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
-  .cc-btn { flex: 1; padding: 6px 0; font-size: 18px; font-weight: 700; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; -webkit-tap-highlight-color: transparent; line-height: 1; text-align: center; }
-  .cc-btn.minus { color: var(--muted); }
+  .card-controls { display: flex; gap: 6px; margin-top: 10px; }
+  .cc-btn { flex: 1; padding: 7px 0; font-size: 18px; font-weight: 700; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; -webkit-tap-highlight-color: transparent; line-height: 1; text-align: center; }
   .cc-btn.minus:active { color: var(--red); border-color: var(--red); }
   .cc-btn.plus:active  { color: var(--blue); border-color: var(--blue); }
   .cc-btn:disabled { opacity: 0.25; cursor: default; }
@@ -105,25 +105,23 @@
   .section-title { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
 
   .break-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 8px; background: var(--surface2); margin-bottom: 5px; font-size: 12px; }
-  .break-num  { font-size: 10px; font-weight: 600; color: var(--muted); min-width: 18px; }
+  .break-num   { font-size: 10px; font-weight: 600; color: var(--muted); min-width: 18px; }
   .break-times { color: var(--text); }
-  .break-dur  { margin-left: auto; color: var(--red); background: var(--red-bg); padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .break-dur   { margin-left: auto; color: var(--red); background: var(--red-bg); padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
   .break-active { background: var(--red-bg); border: 1px dashed var(--red); }
-  .no-breaks  { font-size: 12px; color: var(--muted); }
+  .no-breaks { font-size: 12px; color: var(--muted); }
 
   .report-box { display: none; }
   .report-box.visible { display: block; }
   .report-text { font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.75; color: var(--text); background: var(--surface2); border-radius: 10px; padding: 12px 14px; white-space: pre-wrap; word-break: break-word; border: 1px solid var(--border); margin-bottom: 10px; }
   .btn-copy { width: 100%; padding: 12px; font-size: 14px; font-weight: 700; border-radius: 10px; border: none; background: var(--blue); color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .btn-copy:active  { opacity: 0.8; }
-  .btn-copy.copied  { background: #2E9E5B; }
+  .btn-copy:active { opacity: 0.8; }
+  .btn-copy.copied { background: #2E9E5B; }
 
-  /* Workday view specifics */
-  .workday-card .card-count { color: var(--blue); }
-  .wd-actions { display: flex; gap: 8px; margin-bottom: 1rem; }
-  .wd-actions .btn { flex: 1; justify-content: center; display: flex; align-items: center; gap: 6px; }
   .wd-sub { font-size: 12px; color: var(--muted); margin-bottom: 1rem; line-height: 1.5; }
   .wd-sub b { color: var(--text); }
+  .wd-actions { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .wd-actions .btn { flex: 1; }
 </style>
 </head>
 <body>
@@ -131,9 +129,10 @@
 
   <div class="topbar">
     <div class="logo-mark">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 3L2 8l10 5 8-4.2V15h1.5V8L12 3z" fill="white"/>
-        <path d="M6 11.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5L12 14l-6-2.5z" fill="white"/>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L3 7.5l9 4.5 9-4.5L12 2z" fill="white"/>
+        <path d="M3 7.5v1L12 13.5l9-4.5v-1" fill="white" opacity="0.5"/>
+        <path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5l-6 3-6-3z" fill="white"/>
       </svg>
     </div>
     <div>
@@ -142,29 +141,117 @@
     </div>
   </div>
 
+  <!-- Tabs: Рабочий день слева, Замер справа -->
   <div class="tabs">
-    <div class="tab active" id="tabMeasureBtn" onclick="switchTab('measure')"><i class="ti ti-stopwatch"></i>Замер</div>
-    <div class="tab" id="tabWorkdayBtn" onclick="switchTab('workday')"><i class="ti ti-briefcase"></i>Рабочий день</div>
+    <div class="tab active" id="tabWorkdayBtn" onclick="switchTab('workday')"><i class="ti ti-briefcase"></i>Рабочий день</div>
+    <div class="tab"        id="tabMeasureBtn" onclick="switchTab('measure')"><i class="ti ti-stopwatch"></i>Замер 1 час</div>
   </div>
 
-  <!-- ============ ВКЛАДКА: ЗАМЕР (1 ЧАС) ============ -->
-  <div class="view active" id="viewMeasure">
+  <!-- ======================================================
+       ВКЛАДКА: РАБОЧИЙ ДЕНЬ
+  ====================================================== -->
+  <div class="view active" id="viewWorkday">
+
+    <div class="wd-sub">Копится <b>весь день</b> без таймера. Клики из «Замера» автоматически идут сюда тоже.</div>
+
+    <div class="grid">
+      <div class="card" id="wcNabory">
+        <div class="flash" id="wfNabory"></div>
+        <div class="card-icon"><i class="ti ti-phone"></i></div>
+        <div class="card-title">Наборы</div>
+        <div class="card-hint">Любой набранный номер</div>
+        <div class="card-hit" onclick="hitWd('nabory')">
+          <div class="card-count blue" id="wvNabory">0</div>
+          <div class="card-adds">+1 набор</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adjWd('nabory',-1)">−</button>
+          <button class="cc-btn plus"  onclick="hitWd('nabory')">+</button>
+        </div>
+      </div>
+
+      <div class="card" id="wcDoz">
+        <div class="flash" id="wfDoz"></div>
+        <div class="card-icon"><i class="ti ti-phone-check"></i></div>
+        <div class="card-title">Дозвоны</div>
+        <div class="card-hint">Абонент ответил</div>
+        <div class="card-hit" onclick="hitWd('doz')">
+          <div class="card-count blue" id="wvDoz">0</div>
+          <div class="card-adds">+1 набор · +1 дозвон</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adjWd('doz',-1)">−</button>
+          <button class="cc-btn plus"  onclick="hitWd('doz')">+</button>
+        </div>
+      </div>
+
+      <div class="card" id="wcDial">
+        <div class="flash" id="wfDial"></div>
+        <div class="card-icon"><i class="ti ti-messages"></i></div>
+        <div class="card-title">Диалоги</div>
+        <div class="card-hint">Разговор более 60 сек</div>
+        <div class="card-hit" onclick="hitWd('dial')">
+          <div class="card-count blue" id="wvDial">0</div>
+          <div class="card-adds">+1 набор · +1 дозвон · +1 диалог</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adjWd('dial',-1)">−</button>
+          <button class="cc-btn plus"  onclick="hitWd('dial')">+</button>
+        </div>
+      </div>
+
+      <div class="card" id="wcNaz">
+        <div class="flash" id="wfNaz"></div>
+        <div class="card-icon"><i class="ti ti-calendar-check"></i></div>
+        <div class="card-title">Назначения</div>
+        <div class="card-hint">Встреча назначена</div>
+        <div class="card-hit" onclick="hitWd('naz')">
+          <div class="card-count blue" id="wvNaz">0</div>
+          <div class="card-adds">+1 к каждой категории</div>
+        </div>
+        <div class="card-controls">
+          <button class="cc-btn minus" onclick="adjWd('naz',-1)">−</button>
+          <button class="cc-btn plus"  onclick="hitWd('naz')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="conv-rate" id="convRateWd">Конверсия: нет данных</div>
+    </div>
+
+    <div class="wd-actions">
+      <button class="btn blue" onclick="summarizeWorkday()"><i class="ti ti-clipboard-check"></i> Подвести итог</button>
+      <button class="btn-reset" onclick="resetWorkday()"><i class="ti ti-refresh"></i> Сбросить день</button>
+    </div>
+
+    <div class="section report-box" id="reportBoxWd">
+      <div class="section-title"><i class="ti ti-send" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Итог дня для мессенджера</div>
+      <div class="report-text" id="reportTextWd"></div>
+      <button class="btn-copy" id="btnCopyWd" onclick="copyReportWd()"><i class="ti ti-copy"></i> Скопировать</button>
+    </div>
+
+  </div>
+
+  <!-- ======================================================
+       ВКЛАДКА: ЗАМЕР (1 ЧАС)
+  ====================================================== -->
+  <div class="view" id="viewMeasure">
 
     <div class="header">
-      <div class="timer-block">
-        <div class="timer-label">Осталось</div>
-        <div class="timer-display" id="timerDisplay">60:00</div>
-      </div>
-      <div class="controls">
+      <div class="header-top">
+        <div class="timer-block">
+          <div class="timer-label">Осталось</div>
+          <div class="timer-display" id="timerDisplay">60:00</div>
+        </div>
         <div class="btn-row">
           <button class="btn" id="btnStart"  onclick="toggleTimer()"><i class="ti ti-player-play"></i> Старт</button>
-          <button class="btn" id="btnPause"  onclick="togglePause()"  disabled><i class="ti ti-player-pause"></i> Пауза</button>
-          <button class="btn danger" id="btnFinish" onclick="finishEarly()" disabled title="Завершить замер"><i class="ti ti-player-stop"></i></button>
+          <button class="btn" id="btnPause"  onclick="togglePause()" disabled><i class="ti ti-player-pause"></i> Пауза</button>
+          <button class="btn danger" id="btnFinish" onclick="finishEarly()" disabled><i class="ti ti-player-stop"></i> Завершить</button>
         </div>
-        <div class="time-row" id="timeRow" style="display:none">
-          <span>Старт: <b id="tStart">—</b></span><br>
-          <span>Конец: <b id="tEnd">—</b></span>
-        </div>
+      </div>
+      <div class="time-row" id="timeRow" style="display:none">
+        Старт: <b id="tStart">—</b> &nbsp;·&nbsp; Конец: <b id="tEnd">—</b>
       </div>
     </div>
 
@@ -243,466 +330,452 @@
     </div>
 
     <div class="section report-box" id="reportBox">
-      <div class="section-title"><i class="ti ti-send" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Отчёт для мессенджера</div>
+      <div class="section-title"><i class="ti ti-send" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Отчёт замера</div>
       <div class="report-text" id="reportText"></div>
       <button class="btn-copy" id="btnCopy" onclick="copyReport()"><i class="ti ti-copy"></i> Скопировать</button>
     </div>
 
   </div>
-
-  <!-- ============ ВКЛАДКА: РАБОЧИЙ ДЕНЬ ============ -->
-  <div class="view" id="viewWorkday">
-
-    <div class="wd-sub">Считает <b>весь день</b>, без таймера. Каждый клик здесь и во вкладке «Замер» суммируется в общий итог дня.</div>
-
-    <div class="grid">
-      <div class="card workday-card" id="wcNabory">
-        <div class="flash" id="wfNabory"></div>
-        <div class="card-icon"><i class="ti ti-phone"></i></div>
-        <div class="card-title">Наборы</div>
-        <div class="card-hint">Любой набранный номер</div>
-        <div class="card-hit" onclick="hitWd('nabory')">
-          <div class="card-count" id="wvNabory">0</div>
-          <div class="card-adds">+1 набор</div>
-        </div>
-        <div class="card-controls">
-          <button class="cc-btn minus" onclick="adjWd('nabory',-1)">−</button>
-          <button class="cc-btn plus"  onclick="hitWd('nabory')">+</button>
-        </div>
-      </div>
-
-      <div class="card workday-card" id="wcDoz">
-        <div class="flash" id="wfDoz"></div>
-        <div class="card-icon"><i class="ti ti-phone-check"></i></div>
-        <div class="card-title">Дозвоны</div>
-        <div class="card-hint">Абонент ответил</div>
-        <div class="card-hit" onclick="hitWd('doz')">
-          <div class="card-count" id="wvDoz">0</div>
-          <div class="card-adds">+1 набор · +1 дозвон</div>
-        </div>
-        <div class="card-controls">
-          <button class="cc-btn minus" onclick="adjWd('doz',-1)">−</button>
-          <button class="cc-btn plus"  onclick="hitWd('doz')">+</button>
-        </div>
-      </div>
-
-      <div class="card workday-card" id="wcDial">
-        <div class="flash" id="wfDial"></div>
-        <div class="card-icon"><i class="ti ti-messages"></i></div>
-        <div class="card-title">Диалоги</div>
-        <div class="card-hint">Разговор более 60 сек</div>
-        <div class="card-hit" onclick="hitWd('dial')">
-          <div class="card-count" id="wvDial">0</div>
-          <div class="card-adds">+1 набор · +1 дозвон · +1 диалог</div>
-        </div>
-        <div class="card-controls">
-          <button class="cc-btn minus" onclick="adjWd('dial',-1)">−</button>
-          <button class="cc-btn plus"  onclick="hitWd('dial')">+</button>
-        </div>
-      </div>
-
-      <div class="card workday-card" id="wcNaz">
-        <div class="flash" id="wfNaz"></div>
-        <div class="card-icon"><i class="ti ti-calendar-check"></i></div>
-        <div class="card-title">Назначения</div>
-        <div class="card-hint">Встреча назначена</div>
-        <div class="card-hit" onclick="hitWd('naz')">
-          <div class="card-count" id="wvNaz">0</div>
-          <div class="card-adds">+1 к каждой категории</div>
-        </div>
-        <div class="card-controls">
-          <button class="cc-btn minus" onclick="adjWd('naz',-1)">−</button>
-          <button class="cc-btn plus"  onclick="hitWd('naz')">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer">
-      <div class="conv-rate" id="convRateWd">Конверсия: нет данных</div>
-    </div>
-
-    <div class="wd-actions">
-      <button class="btn" onclick="summarizeWorkday()"><i class="ti ti-clipboard-check"></i> Подвести итог</button>
-      <button class="btn-reset" style="flex:1" onclick="resetWorkday()"><i class="ti ti-refresh"></i> Сбросить день</button>
-    </div>
-
-    <div class="section report-box" id="reportBoxWd">
-      <div class="section-title"><i class="ti ti-send" style="font-size:13px;vertical-align:-1px;margin-right:4px"></i>Итог дня для мессенджера</div>
-      <div class="report-text" id="reportTextWd"></div>
-      <button class="btn-copy" id="btnCopyWd" onclick="copyReportWd()"><i class="ti ti-copy"></i> Скопировать</button>
-    </div>
-
-  </div>
-
 </div>
+
 <script>
-  // ============================================================
-  //  ОБЩЕЕ СОСТОЯНИЕ
-  // ============================================================
-  // counts        — счётчики текущего замера (1 час)
-  // workdayCounts — счётчики всего рабочего дня (суммирует ВСЁ:
-  //                 клики из замера автоматически идут и сюда,
-  //                 плюс отдельные клики во вкладке "Рабочий день")
-  var counts        = { nabory:0, doz:0, dial:0, naz:0 };
-  var workdayCounts = { nabory:0, doz:0, dial:0, naz:0 };
+// ================================================================
+//  ХРАНЕНИЕ: сохраняем в localStorage при каждом изменении
+// ================================================================
+var STORE_KEY_WD  = 'mayak_wd';
+var STORE_KEY_M   = 'mayak_m';
+var STORE_KEY_TAB = 'mayak_tab';
 
-  function pad(n){ return n<10?'0'+n:''+n; }
-  function fmtFull(d){ return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }
-  function fmtShort(d){ return pad(d.getHours())+':'+pad(d.getMinutes()); }
-  function fmtDur(ms){
-    var s=Math.round(ms/1000), m=Math.floor(s/60), sec=s%60;
-    return m>0? m+' мин '+sec+' сек' : sec+' сек';
+function saveWd(){
+  try { localStorage.setItem(STORE_KEY_WD, JSON.stringify(workdayCounts)); } catch(e){}
+}
+function saveMeasure(){
+  try { localStorage.setItem(STORE_KEY_M, JSON.stringify({
+    counts: counts,
+    remaining: remaining,
+    running: running,
+    paused: paused,
+    finished: finished,
+    elapsedBeforeMs: elapsedBeforeMs + (running && !paused ? Date.now() - startEpoch : 0),
+    totalPauseMs: totalPauseMs,
+    startTime: startTime ? startTime.getTime() : null,
+    realEndTime: realEndTime ? realEndTime.getTime() : null,
+    breaks: breaks.map(function(b){ return {start:b.start.getTime(), end:b.end.getTime(), dur:b.dur}; })
+  })); } catch(e){}
+}
+function saveTab(name){
+  try { localStorage.setItem(STORE_KEY_TAB, name); } catch(e){}
+}
+
+// ================================================================
+//  СОСТОЯНИЕ
+// ================================================================
+var counts        = { nabory:0, doz:0, dial:0, naz:0 };
+var workdayCounts = { nabory:0, doz:0, dial:0, naz:0 };
+
+// Таймер
+var DURATION = 3600;
+var remaining = DURATION;
+var running = false, paused = false, finished = false;
+var rafId = null;
+var startEpoch = 0, elapsedBeforeMs = 0;
+var totalPauseMs = 0, pauseStartTs = null;
+var startTime = null, realEndTime = null;
+var breaks = [], currentBreakStart = null;
+
+// ================================================================
+//  ВКЛАДКИ
+// ================================================================
+function switchTab(name){
+  document.getElementById('viewWorkday').classList.toggle('active', name==='workday');
+  document.getElementById('viewMeasure').classList.toggle('active', name==='measure');
+  document.getElementById('tabWorkdayBtn').classList.toggle('active', name==='workday');
+  document.getElementById('tabMeasureBtn').classList.toggle('active', name==='measure');
+  saveTab(name);
+}
+
+// ================================================================
+//  ТАЙМЕР
+// ================================================================
+function pad(n){ return n<10?'0'+n:''+n; }
+function fmtFull(d){ return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }
+function fmtShort(d){ return pad(d.getHours())+':'+pad(d.getMinutes()); }
+function fmtDur(ms){
+  var s=Math.round(ms/1000), m=Math.floor(s/60), sec=s%60;
+  return m>0? m+' мин '+sec+' сек' : sec+' сек';
+}
+
+function tick(){
+  if(!running || paused) return;
+  var elapsed = elapsedBeforeMs + (Date.now() - startEpoch);
+  var rem = DURATION - Math.floor(elapsed/1000);
+  if(rem < 0) rem = 0;
+  if(rem !== remaining){ remaining = rem; renderTimer(); }
+  if(remaining <= 0){ remaining = 0; renderTimer(); return; }
+  rafId = requestAnimationFrame(tick);
+}
+
+function renderTimer(){
+  var m=Math.floor(remaining/60), s=remaining%60;
+  var el=document.getElementById('timerDisplay');
+  el.textContent = pad(m)+':'+pad(s);
+  el.className = 'timer-display'+(paused?' paused':remaining<=0?' over':remaining<=300?' warn':'');
+  var pct = ((DURATION-remaining)/DURATION*100);
+  var fill=document.getElementById('progressFill');
+  fill.style.width = Math.min(pct,100)+'%';
+  fill.style.background = remaining<=300?'var(--red)':'var(--blue)';
+  if(remaining<=0 && running && !finished){
+    var bs=document.getElementById('btnStart');
+    bs.className='btn amber';
+    bs.innerHTML='<i class="ti ti-clock-exclamation"></i> Сверхурочно';
   }
+  updateEndDisplay();
+}
 
-  // ============================================================
-  //  ВКЛАДКИ
-  // ============================================================
-  function switchTab(name){
-    document.getElementById('viewMeasure').classList.toggle('active', name==='measure');
-    document.getElementById('viewWorkday').classList.toggle('active', name==='workday');
-    document.getElementById('tabMeasureBtn').classList.toggle('active', name==='measure');
-    document.getElementById('tabWorkdayBtn').classList.toggle('active', name==='workday');
-  }
+function updateEndDisplay(){
+  if(!startTime) return;
+  var extra = totalPauseMs + (pauseStartTs? Date.now()-pauseStartTs : 0);
+  var proj = new Date(startTime.getTime()+DURATION*1000+extra);
+  document.getElementById('tEnd').textContent = fmtFull(proj);
+}
 
-  // ============================================================
-  //  ЗАМЕР (1 ЧАС) — таймер
-  // ============================================================
-  var DURATION = 3600;
-  var remaining  = DURATION;
-  var running    = false;
-  var paused     = false;
-  var finished   = false;
-  var rafId      = null;
-
-  var startEpoch     = 0;
-  var elapsedBeforeMs = 0;
-  var totalPauseMs   = 0;
-  var pauseStartTs   = null;
-
-  var startTime  = null;
-  var realEndTime = null;
-  var breaks = [], currentBreakStart = null;
-
-  function tick(){
-    if(!running || paused){ return; }
-    var elapsed = elapsedBeforeMs + (Date.now() - startEpoch);
-    var rem = DURATION - Math.floor(elapsed / 1000);
-    if(rem < 0) rem = 0;
-    if(rem !== remaining){ remaining = rem; renderTimer(); }
-    if(remaining <= 0){
-      remaining = 0;
-      renderTimer();
-      return; // не завершаем автоматически — ждём ручной стоп
-    }
-    rafId = requestAnimationFrame(tick);
-  }
-
-  function renderTimer(){
-    var m = Math.floor(remaining/60), s = remaining%60;
-    var el = document.getElementById('timerDisplay');
-    el.textContent = pad(m)+':'+pad(s);
-    el.className = 'timer-display'+(paused?' paused':remaining<=0?' over':remaining<=300?' warn':'');
-    var pct = ((DURATION-remaining)/DURATION*100).toFixed(2);
-    var fill = document.getElementById('progressFill');
-    fill.style.width = Math.min(pct,100)+'%';
-    fill.style.background = remaining<=0?'var(--red)':remaining<=300?'var(--red)':'var(--blue)';
-    if(remaining <= 0 && running && !finished){
-      var bs = document.getElementById('btnStart');
-      bs.className = 'btn amber';
-      bs.innerHTML = '<i class="ti ti-clock-exclamation"></i> Сверхурочно';
-    }
+function toggleTimer(){
+  if(finished) return;
+  if(!running){
+    running=true; paused=false;
+    startTime=new Date(); startEpoch=Date.now(); elapsedBeforeMs=0;
+    document.getElementById('tStart').textContent = fmtFull(startTime);
+    document.getElementById('timeRow').style.display='block';
     updateEndDisplay();
+    var btn=document.getElementById('btnStart');
+    btn.className='btn blue';
+    btn.innerHTML='<i class="ti ti-player-play"></i> Идёт замер';
+    document.getElementById('btnPause').disabled=false;
+    document.getElementById('btnFinish').disabled=false;
+    enableCards(true);
+    rafId=requestAnimationFrame(tick);
+    saveMeasure();
   }
+}
 
-  function updateEndDisplay(){
-    if(!startTime) return;
-    var extraMs = totalPauseMs + (pauseStartTs? Date.now()-pauseStartTs : 0);
-    var projected = new Date(startTime.getTime() + DURATION*1000 + extraMs);
-    document.getElementById('tEnd').textContent = fmtFull(projected);
-  }
+function onFinish(){
+  cancelAnimationFrame(rafId);
+  running=false; finished=true;
+  realEndTime=new Date();
+  if(currentBreakStart) _commitBreak();
+  document.getElementById('btnStart').className='btn done';
+  document.getElementById('btnStart').innerHTML='<i class="ti ti-check"></i> Замер завершён';
+  document.getElementById('btnPause').disabled=true;
+  document.getElementById('btnFinish').disabled=true;
+  enableCards(false);
+  updateConv(); showReport(); saveMeasure();
+}
 
-  function toggleTimer(){
-    if(finished) return;
-    if(!running){
-      running = true; paused = false;
-      startTime  = new Date();
-      startEpoch = Date.now();
-      elapsedBeforeMs = 0;
-      document.getElementById('tStart').textContent = fmtFull(startTime);
-      document.getElementById('timeRow').style.display = 'block';
-      updateEndDisplay();
-      var btn = document.getElementById('btnStart');
-      btn.className = 'btn blue';
-      btn.innerHTML = '<i class="ti ti-player-play"></i> Идёт замер';
-      document.getElementById('btnPause').disabled  = false;
-      document.getElementById('btnFinish').disabled = false;
-      enableCards(true);
-      rafId = requestAnimationFrame(tick);
-    }
-  }
+function finishEarly(){
+  if(!running||finished) return;
+  onFinish();
+}
 
-  function onFinish(){
+function togglePause(){
+  if(!running||finished) return;
+  if(!paused){
+    paused=true;
     cancelAnimationFrame(rafId);
-    running = false; finished = true;
-    realEndTime = new Date();
-    if(paused) _commitBreak();
-    document.getElementById('btnStart').className = 'btn done';
-    document.getElementById('btnStart').innerHTML  = '<i class="ti ti-check"></i> Замер завершён';
-    document.getElementById('btnPause').disabled   = true;
-    document.getElementById('btnFinish').disabled  = true;
+    elapsedBeforeMs += Date.now()-startEpoch;
+    currentBreakStart=new Date(); pauseStartTs=Date.now();
     enableCards(false);
-    updateConv();
-    showReport();
+    var bp=document.getElementById('btnPause');
+    bp.className='btn amber';
+    bp.innerHTML='<i class="ti ti-player-play"></i> Продолжить';
+    renderTimer(); renderBreaks(); saveMeasure();
+  } else {
+    _commitBreak();
+    startEpoch=Date.now(); paused=false;
+    enableCards(true);
+    var bp=document.getElementById('btnPause');
+    bp.className='btn';
+    bp.innerHTML='<i class="ti ti-player-pause"></i> Пауза';
+    renderTimer();
+    rafId=requestAnimationFrame(tick);
+    saveMeasure();
   }
+}
 
-  function finishEarly(){
-    if(!running || finished) return;
-    onFinish();
+function _commitBreak(){
+  if(!currentBreakStart) return;
+  var endB=new Date(), dur=endB-currentBreakStart;
+  breaks.push({start:currentBreakStart, end:endB, dur:dur});
+  totalPauseMs+=dur; pauseStartTs=null; currentBreakStart=null;
+  renderBreaks();
+}
+
+function renderBreaks(){
+  var el=document.getElementById('breaksList'), html='';
+  breaks.forEach(function(b,i){
+    html+='<div class="break-item"><span class="break-num">#'+(i+1)+'</span>'
+         +'<span class="break-times">'+fmtFull(b.start)+' — '+fmtFull(b.end)+'</span>'
+         +'<span class="break-dur">'+fmtDur(b.dur)+'</span></div>';
+  });
+  if(paused&&currentBreakStart){
+    html+='<div class="break-item break-active"><span class="break-num">#'+(breaks.length+1)+'</span>'
+         +'<span class="break-times">'+fmtFull(currentBreakStart)+' — сейчас</span>'
+         +'<span class="break-dur">в процессе</span></div>';
   }
+  el.innerHTML=html||'<span class="no-breaks">Перерывов пока не было</span>';
+}
 
-  function togglePause(){
-    if(!running || finished) return;
-    if(!paused){
-      paused = true;
-      cancelAnimationFrame(rafId);
-      elapsedBeforeMs += Date.now() - startEpoch;
-      currentBreakStart = new Date();
-      pauseStartTs = Date.now();
-      enableCards(false);
-      var bp = document.getElementById('btnPause');
-      bp.className = 'btn amber';
-      bp.innerHTML = '<i class="ti ti-player-play"></i> Продолжить';
-      renderTimer();
-      renderBreaks();
-    } else {
-      _commitBreak();
-      startEpoch = Date.now();
-      paused = false;
-      enableCards(true);
-      var bp = document.getElementById('btnPause');
-      bp.className = 'btn';
-      bp.innerHTML = '<i class="ti ti-player-pause"></i> Пауза';
-      renderTimer();
-      rafId = requestAnimationFrame(tick);
+// ================================================================
+//  КЛИКИ ЗАМЕРА (каскад + дублирование в рабочий день)
+// ================================================================
+function applyHit(obj,type){
+  if(type==='nabory') obj.nabory++;
+  else if(type==='doz')  { obj.nabory++; obj.doz++; }
+  else if(type==='dial') { obj.nabory++; obj.doz++; obj.dial++; }
+  else if(type==='naz')  { obj.nabory++; obj.doz++; obj.dial++; obj.naz++; }
+}
+
+function hit(type){
+  if(!running||paused) return;
+  applyHit(counts,type);
+  applyHit(workdayCounts,type);
+  refreshUI(type); refreshUIWd(type);
+  saveMeasure(); saveWd();
+}
+
+function adj(type,delta){
+  if(!running||paused) return;
+  counts[type]=Math.max(0,counts[type]+delta);
+  workdayCounts[type]=Math.max(0,workdayCounts[type]+delta);
+  refreshUI(type); refreshUIWd(type);
+  saveMeasure(); saveWd();
+}
+
+function flashEl(id){
+  var f=document.getElementById(id);
+  if(!f) return;
+  f.style.animation='none'; f.offsetHeight;
+  f.style.animation='flashAnim 0.3s ease-out forwards';
+}
+
+function refreshUI(ft){
+  document.getElementById('vNabory').textContent=counts.nabory;
+  document.getElementById('vDoz').textContent=counts.doz;
+  document.getElementById('vDial').textContent=counts.dial;
+  document.getElementById('vNaz').textContent=counts.naz;
+  if(ft){ var m={nabory:'fNabory',doz:'fDoz',dial:'fDial',naz:'fNaz'}; flashEl(m[ft]); }
+  updateConv();
+}
+
+function updateConv(){
+  var p=[];
+  if(counts.nabory>0) p.push('дозвон '+Math.round(counts.doz/counts.nabory*100)+'%');
+  if(counts.doz>0)    p.push('диалог '+Math.round(counts.dial/counts.doz*100)+'%');
+  if(counts.dial>0)   p.push('назначение '+Math.round(counts.naz/counts.dial*100)+'%');
+  document.getElementById('convRate').innerHTML=p.length?'Конверсия: <b>'+p.join(' · ')+'</b>':'Конверсия: нет данных';
+}
+
+function enableCards(on){
+  ['Nabory','Doz','Dial','Naz'].forEach(function(k){
+    document.getElementById('c'+k).classList[on?'remove':'add']('disabled');
+    document.getElementById('m'+k).disabled=!on;
+    document.getElementById('p'+k).disabled=!on;
+  });
+}
+
+function showReport(){
+  var bStr=breaks.length?' (перерывы '+breaks.map(function(b){ return fmtShort(b.start)+'–'+fmtShort(b.end); }).join(', ')+')':'';
+  var end=realEndTime?fmtShort(realEndTime):fmtShort(new Date(startTime.getTime()+DURATION*1000+totalPauseMs));
+  var cp=[];
+  if(counts.nabory>0) cp.push('в дозвон '+Math.round(counts.doz/counts.nabory*100)+'%');
+  if(counts.doz>0)    cp.push('в диалог '+Math.round(counts.dial/counts.doz*100)+'%');
+  if(counts.dial>0)   cp.push('в назначение '+Math.round(counts.naz/counts.dial*100)+'%');
+  var text='Замер '+fmtShort(startTime)+'–'+end+bStr+'\n'
+          +'Наборы '+counts.nabory+'\n'
+          +'Дозвоны '+counts.doz+'\n'
+          +'Диалоги '+counts.dial+'\n'
+          +'Назначения '+counts.naz
+          +(cp.length?'\n\nКонверсия '+cp.join(', ')+'.':'');
+  document.getElementById('reportText').textContent=text;
+  document.getElementById('reportBox').className='section report-box visible';
+}
+
+function resetAll(){
+  cancelAnimationFrame(rafId);
+  running=false; paused=false; finished=false;
+  remaining=DURATION; startTime=null; realEndTime=null;
+  startEpoch=0; elapsedBeforeMs=0; totalPauseMs=0; pauseStartTs=null;
+  counts={nabory:0,doz:0,dial:0,naz:0};
+  breaks=[]; currentBreakStart=null;
+  ['Nabory','Doz','Dial','Naz'].forEach(function(k){ document.getElementById('v'+k).textContent='0'; });
+  document.getElementById('timerDisplay').textContent='60:00';
+  document.getElementById('timerDisplay').className='timer-display';
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('progressFill').style.background='var(--blue)';
+  document.getElementById('timeRow').style.display='none';
+  document.getElementById('tStart').textContent='—';
+  document.getElementById('tEnd').textContent='—';
+  document.getElementById('btnStart').className='btn';
+  document.getElementById('btnStart').innerHTML='<i class="ti ti-player-play"></i> Старт';
+  document.getElementById('btnPause').className='btn';
+  document.getElementById('btnPause').innerHTML='<i class="ti ti-player-pause"></i> Пауза';
+  document.getElementById('btnPause').disabled=true;
+  document.getElementById('btnFinish').disabled=true;
+  document.getElementById('reportBox').className='section report-box';
+  enableCards(false); updateConv(); renderBreaks();
+  try{ localStorage.removeItem(STORE_KEY_M); }catch(e){}
+}
+
+// ================================================================
+//  РАБОЧИЙ ДЕНЬ
+// ================================================================
+function hitWd(type){
+  applyHit(workdayCounts,type);
+  refreshUIWd(type); saveWd();
+}
+function adjWd(type,delta){
+  workdayCounts[type]=Math.max(0,workdayCounts[type]+delta);
+  refreshUIWd(type); saveWd();
+}
+function refreshUIWd(ft){
+  document.getElementById('wvNabory').textContent=workdayCounts.nabory;
+  document.getElementById('wvDoz').textContent=workdayCounts.doz;
+  document.getElementById('wvDial').textContent=workdayCounts.dial;
+  document.getElementById('wvNaz').textContent=workdayCounts.naz;
+  if(ft){ var m={nabory:'wfNabory',doz:'wfDoz',dial:'wfDial',naz:'wfNaz'}; flashEl(m[ft]); }
+  updateConvWd();
+}
+function updateConvWd(){
+  var c=workdayCounts, p=[];
+  if(c.nabory>0) p.push('дозвон '+Math.round(c.doz/c.nabory*100)+'%');
+  if(c.doz>0)    p.push('диалог '+Math.round(c.dial/c.doz*100)+'%');
+  if(c.dial>0)   p.push('назначение '+Math.round(c.naz/c.dial*100)+'%');
+  document.getElementById('convRateWd').innerHTML=p.length?'Конверсия: <b>'+p.join(' · ')+'</b>':'Конверсия: нет данных';
+}
+function summarizeWorkday(){
+  var c=workdayCounts, cp=[];
+  if(c.nabory>0) cp.push('в дозвон '+Math.round(c.doz/c.nabory*100)+'%');
+  if(c.doz>0)    cp.push('в диалог '+Math.round(c.dial/c.doz*100)+'%');
+  if(c.dial>0)   cp.push('в назначение '+Math.round(c.naz/c.dial*100)+'%');
+  var now=new Date();
+  var text='Итог дня на '+fmtShort(now)+'\n'
+          +'Наборы '+c.nabory+'\n'
+          +'Дозвоны '+c.doz+'\n'
+          +'Диалоги '+c.dial+'\n'
+          +'Назначения '+c.naz
+          +(cp.length?'\n\nКонверсия '+cp.join(', ')+'.':'');
+  document.getElementById('reportTextWd').textContent=text;
+  document.getElementById('reportBoxWd').className='section report-box visible';
+}
+function resetWorkday(){
+  workdayCounts={nabory:0,doz:0,dial:0,naz:0};
+  refreshUIWd(null);
+  document.getElementById('reportBoxWd').className='section report-box';
+  try{ localStorage.removeItem(STORE_KEY_WD); }catch(e){}
+}
+
+// ================================================================
+//  КОПИРОВАНИЕ
+// ================================================================
+function copyText(text,btn){
+  function done(){
+    btn.className='btn-copy copied';
+    btn.innerHTML='<i class="ti ti-check"></i> Скопировано!';
+    setTimeout(function(){ btn.className='btn-copy'; btn.innerHTML='<i class="ti ti-copy"></i> Скопировать'; },2000);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done);
+  } else {
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta); done();
+  }
+}
+function copyReport()  { copyText(document.getElementById('reportText').textContent,  document.getElementById('btnCopy')); }
+function copyReportWd(){ copyText(document.getElementById('reportTextWd').textContent, document.getElementById('btnCopyWd')); }
+
+// ================================================================
+//  ВОССТАНОВЛЕНИЕ ИЗ localStorage
+// ================================================================
+function restoreState(){
+  // Рабочий день
+  try {
+    var wd=localStorage.getItem(STORE_KEY_WD);
+    if(wd){ workdayCounts=JSON.parse(wd); refreshUIWd(null); }
+  } catch(e){}
+
+  // Замер
+  try {
+    var ms=localStorage.getItem(STORE_KEY_M);
+    if(ms){
+      var s=JSON.parse(ms);
+      counts=s.counts||{nabory:0,doz:0,dial:0,naz:0};
+      refreshUI(null);
+      if(s.startTime && !s.finished){
+        // Восстанавливаем активный/поставленный на паузу замер
+        startTime=new Date(s.startTime);
+        realEndTime=s.realEndTime?new Date(s.realEndTime):null;
+        totalPauseMs=s.totalPauseMs||0;
+        breaks=(s.breaks||[]).map(function(b){ return {start:new Date(b.start),end:new Date(b.end),dur:b.dur}; });
+        elapsedBeforeMs=s.elapsedBeforeMs||0;
+        remaining=Math.max(0, DURATION-Math.floor(elapsedBeforeMs/1000));
+        document.getElementById('tStart').textContent=fmtFull(startTime);
+        document.getElementById('timeRow').style.display='block';
+
+        if(s.paused){
+          // Восстанавливаем паузу
+          running=true; paused=true; finished=false;
+          currentBreakStart=null; // перерыв уже закрыт при сохранении
+          var btn=document.getElementById('btnStart');
+          btn.className='btn blue';
+          btn.innerHTML='<i class="ti ti-player-play"></i> Идёт замер';
+          document.getElementById('btnPause').disabled=false;
+          document.getElementById('btnPause').className='btn amber';
+          document.getElementById('btnPause').innerHTML='<i class="ti ti-player-play"></i> Продолжить';
+          document.getElementById('btnFinish').disabled=false;
+          renderTimer(); renderBreaks(); enableCards(false);
+        } else {
+          // Восстанавливаем активный замер
+          running=true; paused=false; finished=false;
+          startEpoch=Date.now();
+          var btn=document.getElementById('btnStart');
+          btn.className='btn blue';
+          btn.innerHTML='<i class="ti ti-player-play"></i> Идёт замер';
+          document.getElementById('btnPause').disabled=false;
+          document.getElementById('btnFinish').disabled=false;
+          enableCards(true);
+          renderTimer(); renderBreaks();
+          rafId=requestAnimationFrame(tick);
+        }
+      } else if(s.finished){
+        finished=true; running=false;
+        startTime=s.startTime?new Date(s.startTime):null;
+        realEndTime=s.realEndTime?new Date(s.realEndTime):null;
+        breaks=(s.breaks||[]).map(function(b){ return {start:new Date(b.start),end:new Date(b.end),dur:b.dur}; });
+        totalPauseMs=s.totalPauseMs||0;
+        remaining=0;
+        if(startTime) document.getElementById('tStart').textContent=fmtFull(startTime);
+        document.getElementById('timeRow').style.display='block';
+        document.getElementById('btnStart').className='btn done';
+        document.getElementById('btnStart').innerHTML='<i class="ti ti-check"></i> Замер завершён';
+        document.getElementById('btnPause').disabled=true;
+        document.getElementById('btnFinish').disabled=true;
+        renderTimer(); renderBreaks(); enableCards(false);
+        showReport();
+      }
     }
-  }
+  } catch(e){}
 
-  function _commitBreak(){
-    if(!currentBreakStart) return;
-    var endB = new Date();
-    var dur  = endB - currentBreakStart;
-    breaks.push({ start: currentBreakStart, end: endB, dur: dur });
-    totalPauseMs += dur;
-    pauseStartTs = null;
-    currentBreakStart = null;
-    renderBreaks();
-  }
+  // Вкладка
+  try {
+    var tab=localStorage.getItem(STORE_KEY_TAB);
+    if(tab==='measure') switchTab('measure');
+  } catch(e){}
+}
 
-  function renderBreaks(){
-    var el = document.getElementById('breaksList'), html='';
-    breaks.forEach(function(b,i){
-      html += '<div class="break-item"><span class="break-num">#'+(i+1)+'</span>'
-            + '<span class="break-times">'+fmtFull(b.start)+' — '+fmtFull(b.end)+'</span>'
-            + '<span class="break-dur">'+fmtDur(b.dur)+'</span></div>';
-    });
-    if(paused && currentBreakStart){
-      html += '<div class="break-item break-active"><span class="break-num">#'+(breaks.length+1)+'</span>'
-            + '<span class="break-times">'+fmtFull(currentBreakStart)+' — сейчас</span>'
-            + '<span class="break-dur">в процессе</span></div>';
-    }
-    el.innerHTML = html || '<span class="no-breaks">Перерывов пока не было</span>';
-  }
-
-  // ============================================================
-  //  КЛИКИ — ЗАМЕР (каскад + дублирование в рабочий день)
-  // ============================================================
-  function hit(type){
-    if(!running || paused) return;
-    applyHit(counts, type);
-    applyHit(workdayCounts, type); // дублируем в общий день
-    refreshUI(type);
-    refreshUIWd(type);
-  }
-
-  function adj(type, delta){
-    if(!running || paused) return;
-    counts[type] = Math.max(0, counts[type] + delta);
-    workdayCounts[type] = Math.max(0, workdayCounts[type] + delta); // дублируем
-    refreshUI(type);
-    refreshUIWd(type);
-  }
-
-  function applyHit(obj, type){
-    if(type==='nabory'){ obj.nabory++; }
-    else if(type==='doz') { obj.nabory++; obj.doz++; }
-    else if(type==='dial'){ obj.nabory++; obj.doz++; obj.dial++; }
-    else if(type==='naz') { obj.nabory++; obj.doz++; obj.dial++; obj.naz++; }
-  }
-
-  function refreshUI(flashType){
-    document.getElementById('vNabory').textContent = counts.nabory;
-    document.getElementById('vDoz').textContent    = counts.doz;
-    document.getElementById('vDial').textContent   = counts.dial;
-    document.getElementById('vNaz').textContent    = counts.naz;
-    if(flashType){
-      var map = {nabory:'fNabory', doz:'fDoz', dial:'fDial', naz:'fNaz'};
-      flashEl(map[flashType]);
-    }
-    updateConv();
-  }
-
-  function flashEl(id){
-    var fEl = document.getElementById(id);
-    fEl.style.animation='none'; fEl.offsetHeight;
-    fEl.style.animation='flashAnim 0.3s ease-out forwards';
-  }
-
-  function updateConv(){
-    var parts=[];
-    if(counts.nabory>0) parts.push('дозвон '+Math.round(counts.doz/counts.nabory*100)+'%');
-    if(counts.doz>0)    parts.push('диалог '+Math.round(counts.dial/counts.doz*100)+'%');
-    if(counts.dial>0)   parts.push('назначение '+Math.round(counts.naz/counts.dial*100)+'%');
-    document.getElementById('convRate').innerHTML = parts.length
-      ? 'Конверсия: <b>'+parts.join(' · ')+'</b>'
-      : 'Конверсия: нет данных';
-  }
-
-  function enableCards(on){
-    ['Nabory','Doz','Dial','Naz'].forEach(function(k){
-      document.getElementById('c'+k).classList[on?'remove':'add']('disabled');
-      document.getElementById('m'+k).disabled = !on;
-      document.getElementById('p'+k).disabled = !on;
-    });
-  }
-
-  function showReport(){
-    var breaksStr = breaks.length
-      ? ' (перерывы '+breaks.map(function(b){ return fmtShort(b.start)+'–'+fmtShort(b.end); }).join(', ')+')'
-      : '';
-    var endDisplay = realEndTime ? fmtShort(realEndTime) : fmtShort(new Date(startTime.getTime()+DURATION*1000+totalPauseMs));
-    var convParts=[];
-    if(counts.nabory>0) convParts.push('в дозвон '+Math.round(counts.doz/counts.nabory*100)+'%');
-    if(counts.doz>0)    convParts.push('в диалог '+Math.round(counts.dial/counts.doz*100)+'%');
-    if(counts.dial>0)   convParts.push('в назначение '+Math.round(counts.naz/counts.dial*100)+'%');
-    var convLine = convParts.length ? '\n\nКонверсия '+convParts.join(', ')+'.' : '';
-    var text = 'Замер '+fmtShort(startTime)+'–'+endDisplay+breaksStr+'\n'
-             + 'Наборы '+counts.nabory+'\n'
-             + 'Дозвоны '+counts.doz+'\n'
-             + 'Диалоги '+counts.dial+'\n'
-             + 'Назначения '+counts.naz
-             + convLine;
-    document.getElementById('reportText').textContent = text;
-    document.getElementById('reportBox').className = 'section report-box visible';
-  }
-
-  function copyReport(){ copyText(document.getElementById('reportText').textContent, document.getElementById('btnCopy')); }
-  function copyReportWd(){ copyText(document.getElementById('reportTextWd').textContent, document.getElementById('btnCopyWd')); }
-
-  function copyText(text, btn){
-    function done(){
-      var origHtml = btn.dataset.orig || btn.innerHTML;
-      btn.dataset.orig = origHtml;
-      btn.className='btn-copy copied';
-      btn.innerHTML='<i class="ti ti-check"></i> Скопировано!';
-      setTimeout(function(){ btn.className='btn-copy'; btn.innerHTML=origHtml; },2000);
-    }
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(done);
-    } else {
-      var ta=document.createElement('textarea');
-      ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.focus(); ta.select();
-      try{ document.execCommand('copy'); }catch(e){}
-      document.body.removeChild(ta); done();
-    }
-  }
-
-  function resetAll(){
-    cancelAnimationFrame(rafId);
-    running=false; paused=false; finished=false;
-    remaining=DURATION; startTime=null; realEndTime=null;
-    startEpoch=0; elapsedBeforeMs=0; totalPauseMs=0; pauseStartTs=null;
-    counts={nabory:0,doz:0,dial:0,naz:0};
-    breaks=[]; currentBreakStart=null;
-    ['Nabory','Doz','Dial','Naz'].forEach(function(k){ document.getElementById('v'+k).textContent='0'; });
-    document.getElementById('timerDisplay').textContent='60:00';
-    document.getElementById('timerDisplay').className='timer-display';
-    document.getElementById('progressFill').style.width='0%';
-    document.getElementById('progressFill').style.background='var(--blue)';
-    document.getElementById('timeRow').style.display='none';
-    document.getElementById('tStart').textContent='—';
-    document.getElementById('tEnd').textContent='—';
-    document.getElementById('btnStart').className='btn';
-    document.getElementById('btnStart').innerHTML='<i class="ti ti-player-play"></i> Старт';
-    document.getElementById('btnPause').className='btn';
-    document.getElementById('btnPause').innerHTML='<i class="ti ti-player-pause"></i> Пауза';
-    document.getElementById('btnPause').disabled=true;
-    document.getElementById('btnFinish').disabled=true;
-    document.getElementById('reportBox').className='section report-box';
-    enableCards(false);
-    updateConv();
-    renderBreaks();
-  }
-
-  // ============================================================
-  //  РАБОЧИЙ ДЕНЬ — отдельные клики (тоже каскадные, но без таймера)
-  // ============================================================
-  function hitWd(type){
-    applyHit(workdayCounts, type);
-    refreshUIWd(type);
-  }
-
-  function adjWd(type, delta){
-    workdayCounts[type] = Math.max(0, workdayCounts[type] + delta);
-    refreshUIWd(type);
-  }
-
-  function refreshUIWd(flashType){
-    document.getElementById('wvNabory').textContent = workdayCounts.nabory;
-    document.getElementById('wvDoz').textContent    = workdayCounts.doz;
-    document.getElementById('wvDial').textContent   = workdayCounts.dial;
-    document.getElementById('wvNaz').textContent    = workdayCounts.naz;
-    if(flashType){
-      var map = {nabory:'wfNabory', doz:'wfDoz', dial:'wfDial', naz:'wfNaz'};
-      flashEl(map[flashType]);
-    }
-    updateConvWd();
-  }
-
-  function updateConvWd(){
-    var c = workdayCounts;
-    var parts=[];
-    if(c.nabory>0) parts.push('дозвон '+Math.round(c.doz/c.nabory*100)+'%');
-    if(c.doz>0)    parts.push('диалог '+Math.round(c.dial/c.doz*100)+'%');
-    if(c.dial>0)   parts.push('назначение '+Math.round(c.naz/c.dial*100)+'%');
-    document.getElementById('convRateWd').innerHTML = parts.length
-      ? 'Конверсия: <b>'+parts.join(' · ')+'</b>'
-      : 'Конверсия: нет данных';
-  }
-
-  function summarizeWorkday(){
-    var c = workdayCounts;
-    var convParts=[];
-    if(c.nabory>0) convParts.push('в дозвон '+Math.round(c.doz/c.nabory*100)+'%');
-    if(c.doz>0)    convParts.push('в диалог '+Math.round(c.dial/c.doz*100)+'%');
-    if(c.dial>0)   convParts.push('в назначение '+Math.round(c.naz/c.dial*100)+'%');
-    var convLine = convParts.length ? '\n\nКонверсия '+convParts.join(', ')+'.' : '';
-    var now = new Date();
-    var text = 'Итог дня на '+fmtShort(now)+'\n'
-             + 'Наборы '+c.nabory+'\n'
-             + 'Дозвоны '+c.doz+'\n'
-             + 'Диалоги '+c.dial+'\n'
-             + 'Назначения '+c.naz
-             + convLine;
-    document.getElementById('reportTextWd').textContent = text;
-    document.getElementById('reportBoxWd').className = 'section report-box visible';
-  }
-
-  function resetWorkday(){
-    workdayCounts={nabory:0,doz:0,dial:0,naz:0};
-    refreshUIWd(null);
-    document.getElementById('reportBoxWd').className = 'section report-box';
-  }
+// Запуск
+restoreState();
 </script>
 </body>
 </html>
